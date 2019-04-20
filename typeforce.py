@@ -2,6 +2,10 @@
 # -*- coding: utf-8 -*-
 
 
+class IllegalValueError(ValueError):
+    pass
+
+
 def clip(value, min, max):
     if value < min:
         return min
@@ -12,25 +16,23 @@ def clip(value, min, max):
 
 
 def limited_int(value, min, max, name='Value'):
-    if min > max:
-        min, max = max, min
     if not isinstance(value, int):
         raise TypeError(
             '{:} must be an integer. '
             '{:} found instead.'.format(name, type(value))
         )
     elif min is None and max is not None and value > max:
-        raise ValueError(
+        raise IllegalValueError(
             '{:} must be in range ]-inf, {:}]. '
             '{:} found instead.'.format(name, max, value)
         )
     elif max is None and min is not None and value < min:
-        raise ValueError(
+        raise IllegalValueError(
             '{:} must be in range [{:}, +inf[. '
             '{:} found instead.'.format(name, min, value)
         )
-    elif min is not None and max is not None and value < min or value > max:
-        raise ValueError(
+    elif min is not None and max is not None and (value < min or value > max):
+        raise IllegalValueError(
             '{:} must be in range [{:}, {:}]. '
             '{:} found instead.'.format(name, min, max, value)
         )
@@ -70,6 +72,10 @@ def uint64(value, name='Value'):
     return limited_int(value, 0, 0xFFFFFFFFFFFFFFFF, name)
 
 
+def uint_bits(value, bits, name='Value'):
+    return limited_int(value, 0, (1 << bits) - 1, name)
+
+
 def int8(value, name='Value'):
     return limited_int(value, -0x80, 0x7F, name)
 
@@ -94,7 +100,7 @@ def limited_len(sized, min, max, name='Value', unit=''):
         if max < 0:
             max = 0
         if length > max:
-            raise ValueError(
+            raise IllegalValueError(
                 'Length of {:} must be in range [{:}, {:}]{:}. '
                 '{:} found instead.'.format(
                     name, min, max, unit or '' + unit, length)
@@ -108,7 +114,7 @@ def exact_len(sized, expected, name='Value', unit=''):
     if expected is None or expected < 0:
         expected = 0
     if length != expected:
-        raise ValueError(
+        raise IllegalValueError(
             'Length of {:} must be {:}{:}. '
             '{:} found instead.'.format(
                 name, expected, unit or ' ' + unit, length)
