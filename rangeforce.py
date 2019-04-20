@@ -20,13 +20,8 @@ def clip(value, min, max):
         return value
 
 
-def limited_int(value, min, max, name='Value'):
-    if not isinstance(value, int):
-        raise TypeError(
-            '{:} must be an integer. '
-            '{:} found instead.'.format(name, type(value))
-        )
-    elif min is None and max is not None and value > max:
+def limited(value, min, max, name='Value'):
+    if min is None and max is not None and value > max:
         raise IllegalValueError(
             '{:} must be in range ]-inf, {:}]. '
             '{:} found instead.'.format(name, max, value)
@@ -43,6 +38,26 @@ def limited_int(value, min, max, name='Value'):
         )
     else:
         return value
+
+
+def limited_int(value, min, max, name='Value'):
+    if not isinstance(value, int):
+        raise TypeError(
+            '{:} must be an integer. '
+            '{:} found instead.'.format(name, type(value))
+        )
+    else:
+        return limited(value, min, max, name)
+
+
+def limited_float(value, min, max, name='Value'):
+    if not isinstance(value, float):
+        raise TypeError(
+            '{:} must be a float. '
+            '{:} found instead.'.format(name, type(value))
+        )
+    else:
+        return limited(value, min, max, name)
 
 
 def negative_int(value, name='Value'):
@@ -104,11 +119,11 @@ def limited_len(sized, min, max, name='Value', unit=''):
     if max is not None:
         if max < 0:
             max = 0
-        if length > max:
+        if length < min or length > max:
             raise IllegalValueError(
                 'Length of {:} must be in range [{:}, {:}]{:}. '
                 '{:} found instead.'.format(
-                    name, min, max, unit or '' + unit, length)
+                    name, min, max, unit or ' ' + unit, length)
             )
     else:
         return sized
