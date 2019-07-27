@@ -331,6 +331,27 @@ class TestLimited(unittest.TestCase):
             rf.limited(10, float('nan'), 5)
         self.assertEqual(expected_message, str(ex.exception))
 
+    def test_enforce_type(self):
+        self.assertEqual(2, rf.limited(2, 0, 10, dtype=int))
+        expected_message = 'Value must be of type int. float found instead.'
+        with self.assertRaises(TypeError) as ex:
+            rf.limited(2.0, 0, 10, dtype=int)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_enforce_int_type(self):
+        self.assertEqual(2, rf.limited_int(2, 0, 10))
+        expected_message = 'Value must be of type int. float found instead.'
+        with self.assertRaises(TypeError) as ex:
+            rf.limited_int(2.0, 0, 10)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_enforce_float_type(self):
+        self.assertEqual(2.0, rf.limited_int(2, 0, 10))
+        expected_message = 'Value must be of type float. int found instead.'
+        with self.assertRaises(TypeError) as ex:
+            rf.limited_float(2, 0, 10)
+        self.assertEqual(expected_message, str(ex.exception))
+
 
 class TestLimitedInt(unittest.TestCase):
     pass

@@ -22,8 +22,9 @@ def clip(value, min, max):
         return value
 
 
-def limited(value, min, max, name='Value'):
+def limited(value, min, max, name='Value', dtype=None):
     _validate_interval(min, max)
+    _validate_type(name, value, dtype)
     if min is None and max is not None and (value > max or math.isnan(value)):
         raise RangeError(
             '{:} must be in range ]-inf, {:}]. '
@@ -58,76 +59,73 @@ def _validate_interval(min, max):
             'Interval extremes [{:}, {:}] not in order.'.format(min, max))
 
 
-def limited_int(value, min, max, name='Value'):
-    if not isinstance(value, int):
+def _validate_type(name, value, dtype):
+    if dtype is not None and not isinstance(value, dtype):
         raise TypeError(
-            '{:} must be an integer. '
-            '{:} found instead.'.format(name, type(value))
+            '{:} must be of type {:}. '
+            '{:} found instead.'.format(name, dtype.__name__,
+                                        type(value).__name__)
         )
-    else:
-        return limited(value, min, max, name)
+
+
+def limited_int(value, min, max, name='Value'):
+    return limited(value, min, max, name, dtype=int)
 
 
 def limited_float(value, min, max, name='Value'):
-    if not isinstance(value, float):
-        raise TypeError(
-            '{:} must be a float. '
-            '{:} found instead.'.format(name, type(value))
-        )
-    else:
-        return limited(value, min, max, name)
+    return limited(value, min, max, name, dtype=float)
 
 
 def negative_int(value, name='Value'):
-    return limited_int(value, None, -1, name)
+    return limited(value, None, -1, name, dtype=int)
 
 
 def nonpositive_int(value, name='Value'):
-    return limited_int(value, None, 0, name)
+    return limited(value, None, 0, name, dtype=int)
 
 
 def positive_int(value, name='Value'):
-    return limited_int(value, 1, None, name)
+    return limited(value, 1, None, name, dtype=int)
 
 
 def nonnegative_int(value, name='Value'):
-    return limited_int(value, 0, None, name)
+    return limited(value, 0, None, name, dtype=int)
 
 
 def uint8(value, name='Value'):
-    return limited_int(value, 0, 0xFF, name)
+    return limited(value, 0, 0xFF, name, dtype=int)
 
 
 def uint16(value, name='Value'):
-    return limited_int(value, 0, 0xFFFF, name)
+    return limited(value, 0, 0xFFFF, name, dtype=int)
 
 
 def uint32(value, name='Value'):
-    return limited_int(value, 0, 0xFFFFFFFF, name)
+    return limited(value, 0, 0xFFFFFFFF, name, dtype=int)
 
 
 def uint64(value, name='Value'):
-    return limited_int(value, 0, 0xFFFFFFFFFFFFFFFF, name)
+    return limited(value, 0, 0xFFFFFFFFFFFFFFFF, name, dtype=int)
 
 
 def uint_bits(value, bits, name='Value'):
-    return limited_int(value, 0, (1 << bits) - 1, name)
+    return limited(value, 0, (1 << bits) - 1, name, dtype=int)
 
 
 def int8(value, name='Value'):
-    return limited_int(value, -0x80, 0x7F, name)
+    return limited(value, -0x80, 0x7F, name, dtype=int)
 
 
 def int16(value, name='Value'):
-    return limited_int(value, -0x8000, 0x7FFF, name)
+    return limited(value, -0x8000, 0x7FFF, name, dtype=int)
 
 
 def int32(value, name='Value'):
-    return limited_int(value, -0x80000000, 0x7FFFFFFF, name)
+    return limited(value, -0x80000000, 0x7FFFFFFF, name, dtype=int)
 
 
 def int64(value, name='Value'):
-    return limited_int(value, -0x8000000000000000, 0x7FFFFFFFFFFFFFFF, name)
+    return limited(value, -0x8000000000000000, 0x7FFFFFFFFFFFFFFF, name, dtype=int)
 
 
 def limited_len(sized, min, max, name='Value', unit=''):
