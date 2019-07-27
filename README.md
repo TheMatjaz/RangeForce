@@ -1,4 +1,4 @@
-Rangeforce: developer-friendly range checks with user-friendly messages
+Rangeforce: developer-friendly range checks with user-friendly error messages
 ===============================================================================
 
 
