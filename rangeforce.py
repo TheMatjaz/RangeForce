@@ -6,6 +6,7 @@
 
 __VERSION__ = 'v1.0.0'
 
+import math
 
 class IllegalValueError(ValueError):
     pass
@@ -21,23 +22,39 @@ def clip(value, min, max):
 
 
 def limited(value, min, max, name='Value'):
-    if min is None and max is not None and value > max:
+    _validate_interval(min, max)
+    if min is None and max is not None and (value > max or math.isnan(value)):
         raise IllegalValueError(
             '{:} must be in range ]-inf, {:}]. '
             '{:} found instead.'.format(name, max, value)
         )
-    elif max is None and min is not None and value < min:
+    elif max is None and min is not None and (
+            value < min or math.isnan(value)):
         raise IllegalValueError(
             '{:} must be in range [{:}, +inf[. '
             '{:} found instead.'.format(name, min, value)
         )
-    elif min is not None and max is not None and (value < min or value > max):
+    elif min is not None and max is not None and (
+            value < min or value > max or math.isnan(value)):
         raise IllegalValueError(
             '{:} must be in range [{:}, {:}]. '
             '{:} found instead.'.format(name, min, max, value)
         )
     else:
         return value
+
+
+def _validate_interval(min, max):
+    if min is None and max is None:
+        raise ValueError(
+            '[min, max] interval must be closed on at least one extreme.')
+    elif min is not None and math.isnan(min):
+        raise ValueError('NaN is not a valid interval lower bound.')
+    elif max is not None and math.isnan(max):
+        raise ValueError('NaN is not a valid interval upper bound.')
+    elif min is not None and max is not None and min > max:
+        raise ValueError(
+            'Interval extremes [{:}, {:}] not in order.'.format(min, max))
 
 
 def limited_int(value, min, max, name='Value'):

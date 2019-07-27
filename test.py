@@ -191,9 +191,146 @@ class TestNegativePositiveInt(unittest.TestCase):
 
 
 class TestLimited(unittest.TestCase):
-    def test_in_range(self):
-        pass
-    # TODO
+    def test_in_closed_range(self):
+        for i in range(100):
+            self.assertEqual(i, rf.limited(i, 0, 99))
+        for i in range(100):
+            self.assertEqual(i + 0.1, rf.limited(i + 0.1, 0, 100))
+
+    def test_in_open_range_upper_bound(self):
+        for i in range(100):
+            self.assertEqual(i, rf.limited(i, 0, None))
+        for i in range(100):
+            self.assertEqual(i + 0.1, rf.limited(i + 0.1, 0, None))
+
+    def test_in_open_range_on_lower_bound(self):
+        for i in range(100):
+            self.assertEqual(i, rf.limited(i, None, 99))
+        for i in range(100):
+            self.assertEqual(i + 0.1, rf.limited(i + 0.1, None, 99.2))
+
+    def test_below_closed_range(self):
+        expected_message = 'Value must be in range [100, 1000]. ' \
+                           '2 found instead.'
+        with self.assertRaises(rf.IllegalValueError) as ex:
+            rf.limited(2, 100, 1000)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_below_open_range_on_upper_bound(self):
+        expected_message = 'Value must be in range [100, +inf[. ' \
+                           '2 found instead.'
+        with self.assertRaises(rf.IllegalValueError) as ex:
+            rf.limited(2, 100, None)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_above_closed_range(self):
+        expected_message = 'Value must be in range [100, 1000]. ' \
+                           '2000 found instead.'
+        with self.assertRaises(rf.IllegalValueError) as ex:
+            rf.limited(2000, 100, 1000)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_above_open_range_on_lower_bound(self):
+        expected_message = 'Value must be in range ]-inf, 1000]. ' \
+                           '2000 found instead.'
+        with self.assertRaises(rf.IllegalValueError) as ex:
+            rf.limited(2000, None, 1000)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_custom_value_name(self):
+        expected_message = 'HELLO must be in range [100, 1000]. ' \
+                           '2 found instead.'
+        with self.assertRaises(rf.IllegalValueError) as ex:
+            rf.limited(2, 100, 1000, 'HELLO')
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'HELLO must be in range [100, +inf[. ' \
+                           '2 found instead.'
+        with self.assertRaises(rf.IllegalValueError) as ex:
+            rf.limited(2, 100, None, 'HELLO')
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'HELLO must be in range [100, 1000]. ' \
+                           '2000 found instead.'
+        with self.assertRaises(rf.IllegalValueError) as ex:
+            rf.limited(2000, 100, 1000, 'HELLO')
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'HELLO must be in range ]-inf, 1000]. ' \
+                           '2000 found instead.'
+        with self.assertRaises(rf.IllegalValueError) as ex:
+            rf.limited(2000, None, 1000, 'HELLO')
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_plus_infinity(self):
+        inf = float('+inf')
+        expected_message = 'Value must be in range [0.0, 1.0]. ' \
+                           'inf found instead.'
+        with self.assertRaises(rf.IllegalValueError) as ex:
+            rf.limited(inf, 0.0, 1.0)
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'Value must be in range ]-inf, 1.0]. ' \
+                           'inf found instead.'
+        with self.assertRaises(rf.IllegalValueError) as ex:
+            rf.limited(inf, None, 1.0)
+        self.assertEqual(expected_message, str(ex.exception))
+        self.assertEqual(inf, rf.limited(inf, 0, None))
+
+    def test_minus_infinity(self):
+        minf = float('-inf')
+        expected_message = 'Value must be in range [0.0, 1.0]. ' \
+                           '-inf found instead.'
+        with self.assertRaises(rf.IllegalValueError) as ex:
+            rf.limited(minf, 0.0, 1.0)
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'Value must be in range [0.0, +inf[. ' \
+                           '-inf found instead.'
+        with self.assertRaises(rf.IllegalValueError) as ex:
+            rf.limited(minf, 0.0, None)
+        self.assertEqual(expected_message, str(ex.exception))
+        self.assertEqual(minf, rf.limited(minf, None, 0))
+
+    def test_nan(self):
+        nan = float('nan')
+        expected_message = 'Value must be in range [0.0, 1.0]. ' \
+                           'nan found instead.'
+        with self.assertRaises(rf.IllegalValueError) as ex:
+            rf.limited(nan, 0.0, 1.0)
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'Value must be in range [0.0, +inf[. ' \
+                           'nan found instead.'
+        with self.assertRaises(rf.IllegalValueError) as ex:
+            rf.limited(nan, 0.0, None)
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'Value must be in range ]-inf, 0]. ' \
+                           'nan found instead.'
+        with self.assertRaises(rf.IllegalValueError) as ex:
+            rf.limited(nan, None, 0)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_infinity_instead_of_none(self):
+        self.assertEqual(10, rf.limited(10, float('-inf'), 20))
+
+    def test_double_none(self):
+        expected_message = '[min, max] interval must be closed on at least ' \
+                           'one extreme.'
+        with self.assertRaises(ValueError) as ex:
+            rf.limited(10, None, None)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_unsorted_bounds(self):
+        expected_message = 'Interval extremes [20, 15] not in order.'
+        with self.assertRaises(ValueError) as ex:
+            rf.limited(10, 20, 15)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_nan_interval_extreme(self):
+        expected_message = 'NaN is not a valid interval upper bound.'
+        with self.assertRaises(ValueError) as ex:
+            rf.limited(10, 5, float('nan'))
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'NaN is not a valid interval lower bound.'
+        with self.assertRaises(ValueError) as ex:
+            rf.limited(10, float('nan'), 5)
+        self.assertEqual(expected_message, str(ex.exception))
+
 
 class TestLimitedInt(unittest.TestCase):
     pass
