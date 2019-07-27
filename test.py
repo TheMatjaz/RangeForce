@@ -9,9 +9,36 @@ import unittest
 import rangeforce as rf
 
 
-class TestLimitedInt(unittest.TestCase):
-    pass
-    # TODO
+class TestClip(unittest.TestCase):
+    def test_in_range(self):
+        self.assertEqual(2, rf.clip(2, 0, 3))
+        self.assertEqual(2, rf.clip(2, 1, 3))
+        self.assertEqual(2, rf.clip(2, 2, 3))
+        self.assertEqual(2, rf.clip(2, 2, 2))
+        self.assertEqual(3, rf.clip(3, 2, 3))
+        self.assertEqual(3, rf.clip(3, -22, 3))
+
+    def test_negative_in_range(self):
+        self.assertEqual(-3, rf.clip(-3, -20, -1))
+        self.assertEqual(-3, rf.clip(-3, -5, -1))
+        self.assertEqual(-3, rf.clip(-3, -3, -2))
+        self.assertEqual(-3, rf.clip(-3, -3, -3))
+        self.assertEqual(-3, rf.clip(-3, -3, 1))
+
+    def test_smaller_than_range(self):
+        self.assertEqual(10, rf.clip(5, 10, 20))
+        self.assertEqual(10, rf.clip(9, 10, 20))
+        self.assertEqual(10, rf.clip(0, 10, 20))
+        self.assertEqual(10, rf.clip(-10, 10, 20))
+        self.assertEqual(-10, rf.clip(-15, -10, 20))
+
+    def test_larger_than_range(self):
+        self.assertEqual(20, rf.clip(30, 10, 20))
+        self.assertEqual(20, rf.clip(25, 10, 20))
+        self.assertEqual(20, rf.clip(21, -10, 20))
+        self.assertEqual(-20, rf.clip(-2, -50, -20))
+        self.assertEqual(-20, rf.clip(0, -50, -20))
+        self.assertEqual(-20, rf.clip(1, -50, -20))
 
 
 class TestUnsignedInts(unittest.TestCase):
@@ -161,6 +188,16 @@ class TestNegativePositiveInt(unittest.TestCase):
         self.assertIs(20, rf.nonnegative_int(20))
         self.assertEqual(0, rf.nonnegative_int(0))
         self.assertIs(0, rf.nonnegative_int(0))
+
+
+class TestLimited(unittest.TestCase):
+    def test_in_range(self):
+        pass
+    # TODO
+
+class TestLimitedInt(unittest.TestCase):
+    pass
+    # TODO
 
 
 class TestLimitedLen(unittest.TestCase):
