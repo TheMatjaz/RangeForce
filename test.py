@@ -43,28 +43,28 @@ class TestClip(unittest.TestCase):
 
 class TestUnsignedInts(unittest.TestCase):
     def test_uint8(self):
-        self.assertRaises(rf.IllegalValueError, rf.uint8, -1)
-        self.assertRaises(rf.IllegalValueError, rf.uint8, -20)
-        self.assertRaises(rf.IllegalValueError, rf.uint8, 2**8)
-        self.assertRaises(rf.IllegalValueError, rf.uint8, 300)
+        self.assertRaises(rf.RangeError, rf.uint8, -1)
+        self.assertRaises(rf.RangeError, rf.uint8, -20)
+        self.assertRaises(rf.RangeError, rf.uint8, 2**8)
+        self.assertRaises(rf.RangeError, rf.uint8, 300)
         for i in range(0, 2**8):
             self.assertEqual(i, rf.uint8(i))
             self.assertIs(i, rf.uint8(i))
 
     def test_uint16(self):
-        self.assertRaises(rf.IllegalValueError, rf.uint16, -1)
-        self.assertRaises(rf.IllegalValueError, rf.uint16, -20)
-        self.assertRaises(rf.IllegalValueError, rf.uint16, 2**16)
-        self.assertRaises(rf.IllegalValueError, rf.uint16, 5446345)
+        self.assertRaises(rf.RangeError, rf.uint16, -1)
+        self.assertRaises(rf.RangeError, rf.uint16, -20)
+        self.assertRaises(rf.RangeError, rf.uint16, 2**16)
+        self.assertRaises(rf.RangeError, rf.uint16, 5446345)
         for i in range(0, 2**16):
             self.assertEqual(i, rf.uint16(i))
             self.assertIs(i, rf.uint16(i))
 
     def test_uint32(self):
-        self.assertRaises(rf.IllegalValueError, rf.uint32, -1)
-        self.assertRaises(rf.IllegalValueError, rf.uint32, -20)
-        self.assertRaises(rf.IllegalValueError, rf.uint32, 2**32)
-        self.assertRaises(rf.IllegalValueError, rf.uint32, 45874349824936)
+        self.assertRaises(rf.RangeError, rf.uint32, -1)
+        self.assertRaises(rf.RangeError, rf.uint32, -20)
+        self.assertRaises(rf.RangeError, rf.uint32, 2**32)
+        self.assertRaises(rf.RangeError, rf.uint32, 45874349824936)
         rf.uint32(0)
         rf.uint32(1)
         rf.uint32(2)
@@ -75,10 +75,10 @@ class TestUnsignedInts(unittest.TestCase):
             self.assertIs(i, rf.uint32(i))
 
     def test_uint64(self):
-        self.assertRaises(rf.IllegalValueError, rf.uint64, -1)
-        self.assertRaises(rf.IllegalValueError, rf.uint64, -20)
-        self.assertRaises(rf.IllegalValueError, rf.uint64, 2**64)
-        self.assertRaises(rf.IllegalValueError, rf.uint64,
+        self.assertRaises(rf.RangeError, rf.uint64, -1)
+        self.assertRaises(rf.RangeError, rf.uint64, -20)
+        self.assertRaises(rf.RangeError, rf.uint64, 2**64)
+        self.assertRaises(rf.RangeError, rf.uint64,
                           345837634922573643925763492312573634)
         rf.uint64(0)
         rf.uint64(1)
@@ -90,10 +90,10 @@ class TestUnsignedInts(unittest.TestCase):
             self.assertIs(i, rf.uint64(i))
 
     def test_uint_bits(self):
-        self.assertRaises(rf.IllegalValueError, rf.uint_bits, 8, 3)
-        self.assertRaises(rf.IllegalValueError, rf.uint_bits, 8, 2)
-        self.assertRaises(rf.IllegalValueError, rf.uint_bits, -1, 2)
-        self.assertRaises(rf.IllegalValueError, rf.uint_bits, -8, 2)
+        self.assertRaises(rf.RangeError, rf.uint_bits, 8, 3)
+        self.assertRaises(rf.RangeError, rf.uint_bits, 8, 2)
+        self.assertRaises(rf.RangeError, rf.uint_bits, -1, 2)
+        self.assertRaises(rf.RangeError, rf.uint_bits, -8, 2)
         for i in range(0, 8):
             self.assertEqual(i, rf.uint_bits(i, 3))
             self.assertIs(i, rf.uint_bits(i, 3))
@@ -104,27 +104,27 @@ class TestUnsignedInts(unittest.TestCase):
 
 class TestSignedInts(unittest.TestCase):
     def test_int8(self):
-        self.assertRaises(rf.IllegalValueError, rf.int8, -2**7 - 1)
-        self.assertRaises(rf.IllegalValueError, rf.int8, -150)
-        self.assertRaises(rf.IllegalValueError, rf.int8, 2**7)
-        self.assertRaises(rf.IllegalValueError, rf.int8, 1560)
+        self.assertRaises(rf.RangeError, rf.int8, -2**7 - 1)
+        self.assertRaises(rf.RangeError, rf.int8, -150)
+        self.assertRaises(rf.RangeError, rf.int8, 2**7)
+        self.assertRaises(rf.RangeError, rf.int8, 1560)
         for i in range(-128, 127):
             self.assertEqual(i, rf.int8(i))
             self.assertIs(i, rf.int8(i))
 
     def test_int16(self):
-        self.assertRaises(rf.IllegalValueError, rf.int16, -2**15 - 1)
-        self.assertRaises(rf.IllegalValueError, rf.int16, -675832495)
-        self.assertRaises(rf.IllegalValueError, rf.int16, 2**15)
-        self.assertRaises(rf.IllegalValueError, rf.int16, 5446345)
+        self.assertRaises(rf.RangeError, rf.int16, -2**15 - 1)
+        self.assertRaises(rf.RangeError, rf.int16, -675832495)
+        self.assertRaises(rf.RangeError, rf.int16, 2**15)
+        self.assertRaises(rf.RangeError, rf.int16, 5446345)
         for i in range(-32768, 32767):
             self.assertEqual(i, rf.int16(i))
             self.assertIs(i, rf.int16(i))
 
     def test_int32(self):
-        self.assertRaises(rf.IllegalValueError, rf.int32, -2**31 - 1)
-        self.assertRaises(rf.IllegalValueError, rf.int32, 2**31)
-        self.assertRaises(rf.IllegalValueError, rf.int32, 45874349824936)
+        self.assertRaises(rf.RangeError, rf.int32, -2**31 - 1)
+        self.assertRaises(rf.RangeError, rf.int32, 2**31)
+        self.assertRaises(rf.RangeError, rf.int32, 45874349824936)
         rf.int32(-0x8000000)
         rf.int32(-0x8000000 + 1)
         rf.int32(-2)
@@ -139,9 +139,9 @@ class TestSignedInts(unittest.TestCase):
             self.assertIs(i, rf.int32(i))
 
     def test_int64(self):
-        self.assertRaises(rf.IllegalValueError, rf.int64, -2**64 - 1)
-        self.assertRaises(rf.IllegalValueError, rf.int64, 2**64)
-        self.assertRaises(rf.IllegalValueError, rf.int64,
+        self.assertRaises(rf.RangeError, rf.int64, -2**64 - 1)
+        self.assertRaises(rf.RangeError, rf.int64, 2**64)
+        self.assertRaises(rf.RangeError, rf.int64,
                           345837634922573643925763492312573634)
         rf.int64(-0x8000000000000000)
         rf.int64(-0x8000000000000000 + 1)
@@ -160,30 +160,30 @@ class TestSignedInts(unittest.TestCase):
 
 class TestNegativePositiveInt(unittest.TestCase):
     def test_negative_int(self):
-        self.assertRaises(rf.IllegalValueError, rf.negative_int, 0)
-        self.assertRaises(rf.IllegalValueError, rf.negative_int, 1)
-        self.assertRaises(rf.IllegalValueError, rf.negative_int, 100)
+        self.assertRaises(rf.RangeError, rf.negative_int, 0)
+        self.assertRaises(rf.RangeError, rf.negative_int, 1)
+        self.assertRaises(rf.RangeError, rf.negative_int, 100)
         self.assertEqual(-20, rf.negative_int(-20))
         self.assertIs(-20, rf.negative_int(-20))
 
     def test_nonpositive_int(self):
-        self.assertRaises(rf.IllegalValueError, rf.nonpositive_int, 1)
-        self.assertRaises(rf.IllegalValueError, rf.nonpositive_int, 100)
+        self.assertRaises(rf.RangeError, rf.nonpositive_int, 1)
+        self.assertRaises(rf.RangeError, rf.nonpositive_int, 100)
         self.assertEqual(-20, rf.nonpositive_int(-20))
         self.assertIs(-20, rf.nonpositive_int(-20))
         self.assertEqual(0, rf.nonpositive_int(0))
         self.assertIs(0, rf.nonpositive_int(0))
 
     def test_positive_int(self):
-        self.assertRaises(rf.IllegalValueError, rf.positive_int, 0)
-        self.assertRaises(rf.IllegalValueError, rf.positive_int, -1)
-        self.assertRaises(rf.IllegalValueError, rf.positive_int, -100)
+        self.assertRaises(rf.RangeError, rf.positive_int, 0)
+        self.assertRaises(rf.RangeError, rf.positive_int, -1)
+        self.assertRaises(rf.RangeError, rf.positive_int, -100)
         self.assertEqual(20, rf.positive_int(20))
         self.assertIs(20, rf.positive_int(20))
 
     def test_nonnegative_int(self):
-        self.assertRaises(rf.IllegalValueError, rf.nonnegative_int, -1)
-        self.assertRaises(rf.IllegalValueError, rf.nonnegative_int, -100)
+        self.assertRaises(rf.RangeError, rf.nonnegative_int, -1)
+        self.assertRaises(rf.RangeError, rf.nonnegative_int, -100)
         self.assertEqual(20, rf.nonnegative_int(20))
         self.assertIs(20, rf.nonnegative_int(20))
         self.assertEqual(0, rf.nonnegative_int(0))
@@ -212,50 +212,50 @@ class TestLimited(unittest.TestCase):
     def test_below_closed_range(self):
         expected_message = 'Value must be in range [100, 1000]. ' \
                            '2 found instead.'
-        with self.assertRaises(rf.IllegalValueError) as ex:
+        with self.assertRaises(rf.RangeError) as ex:
             rf.limited(2, 100, 1000)
         self.assertEqual(expected_message, str(ex.exception))
 
     def test_below_open_range_on_upper_bound(self):
         expected_message = 'Value must be in range [100, +inf[. ' \
                            '2 found instead.'
-        with self.assertRaises(rf.IllegalValueError) as ex:
+        with self.assertRaises(rf.RangeError) as ex:
             rf.limited(2, 100, None)
         self.assertEqual(expected_message, str(ex.exception))
 
     def test_above_closed_range(self):
         expected_message = 'Value must be in range [100, 1000]. ' \
                            '2000 found instead.'
-        with self.assertRaises(rf.IllegalValueError) as ex:
+        with self.assertRaises(rf.RangeError) as ex:
             rf.limited(2000, 100, 1000)
         self.assertEqual(expected_message, str(ex.exception))
 
     def test_above_open_range_on_lower_bound(self):
         expected_message = 'Value must be in range ]-inf, 1000]. ' \
                            '2000 found instead.'
-        with self.assertRaises(rf.IllegalValueError) as ex:
+        with self.assertRaises(rf.RangeError) as ex:
             rf.limited(2000, None, 1000)
         self.assertEqual(expected_message, str(ex.exception))
 
     def test_custom_value_name(self):
         expected_message = 'HELLO must be in range [100, 1000]. ' \
                            '2 found instead.'
-        with self.assertRaises(rf.IllegalValueError) as ex:
+        with self.assertRaises(rf.RangeError) as ex:
             rf.limited(2, 100, 1000, 'HELLO')
         self.assertEqual(expected_message, str(ex.exception))
         expected_message = 'HELLO must be in range [100, +inf[. ' \
                            '2 found instead.'
-        with self.assertRaises(rf.IllegalValueError) as ex:
+        with self.assertRaises(rf.RangeError) as ex:
             rf.limited(2, 100, None, 'HELLO')
         self.assertEqual(expected_message, str(ex.exception))
         expected_message = 'HELLO must be in range [100, 1000]. ' \
                            '2000 found instead.'
-        with self.assertRaises(rf.IllegalValueError) as ex:
+        with self.assertRaises(rf.RangeError) as ex:
             rf.limited(2000, 100, 1000, 'HELLO')
         self.assertEqual(expected_message, str(ex.exception))
         expected_message = 'HELLO must be in range ]-inf, 1000]. ' \
                            '2000 found instead.'
-        with self.assertRaises(rf.IllegalValueError) as ex:
+        with self.assertRaises(rf.RangeError) as ex:
             rf.limited(2000, None, 1000, 'HELLO')
         self.assertEqual(expected_message, str(ex.exception))
 
@@ -263,12 +263,12 @@ class TestLimited(unittest.TestCase):
         inf = float('+inf')
         expected_message = 'Value must be in range [0.0, 1.0]. ' \
                            'inf found instead.'
-        with self.assertRaises(rf.IllegalValueError) as ex:
+        with self.assertRaises(rf.RangeError) as ex:
             rf.limited(inf, 0.0, 1.0)
         self.assertEqual(expected_message, str(ex.exception))
         expected_message = 'Value must be in range ]-inf, 1.0]. ' \
                            'inf found instead.'
-        with self.assertRaises(rf.IllegalValueError) as ex:
+        with self.assertRaises(rf.RangeError) as ex:
             rf.limited(inf, None, 1.0)
         self.assertEqual(expected_message, str(ex.exception))
         self.assertEqual(inf, rf.limited(inf, 0, None))
@@ -277,12 +277,12 @@ class TestLimited(unittest.TestCase):
         minf = float('-inf')
         expected_message = 'Value must be in range [0.0, 1.0]. ' \
                            '-inf found instead.'
-        with self.assertRaises(rf.IllegalValueError) as ex:
+        with self.assertRaises(rf.RangeError) as ex:
             rf.limited(minf, 0.0, 1.0)
         self.assertEqual(expected_message, str(ex.exception))
         expected_message = 'Value must be in range [0.0, +inf[. ' \
                            '-inf found instead.'
-        with self.assertRaises(rf.IllegalValueError) as ex:
+        with self.assertRaises(rf.RangeError) as ex:
             rf.limited(minf, 0.0, None)
         self.assertEqual(expected_message, str(ex.exception))
         self.assertEqual(minf, rf.limited(minf, None, 0))
@@ -291,17 +291,17 @@ class TestLimited(unittest.TestCase):
         nan = float('nan')
         expected_message = 'Value must be in range [0.0, 1.0]. ' \
                            'nan found instead.'
-        with self.assertRaises(rf.IllegalValueError) as ex:
+        with self.assertRaises(rf.RangeError) as ex:
             rf.limited(nan, 0.0, 1.0)
         self.assertEqual(expected_message, str(ex.exception))
         expected_message = 'Value must be in range [0.0, +inf[. ' \
                            'nan found instead.'
-        with self.assertRaises(rf.IllegalValueError) as ex:
+        with self.assertRaises(rf.RangeError) as ex:
             rf.limited(nan, 0.0, None)
         self.assertEqual(expected_message, str(ex.exception))
         expected_message = 'Value must be in range ]-inf, 0]. ' \
                            'nan found instead.'
-        with self.assertRaises(rf.IllegalValueError) as ex:
+        with self.assertRaises(rf.RangeError) as ex:
             rf.limited(nan, None, 0)
         self.assertEqual(expected_message, str(ex.exception))
 

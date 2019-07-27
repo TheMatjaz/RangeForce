@@ -8,7 +8,8 @@ __VERSION__ = 'v1.0.0'
 
 import math
 
-class IllegalValueError(ValueError):
+
+class RangeError(Exception):
     pass
 
 
@@ -24,19 +25,19 @@ def clip(value, min, max):
 def limited(value, min, max, name='Value'):
     _validate_interval(min, max)
     if min is None and max is not None and (value > max or math.isnan(value)):
-        raise IllegalValueError(
+        raise RangeError(
             '{:} must be in range ]-inf, {:}]. '
             '{:} found instead.'.format(name, max, value)
         )
     elif max is None and min is not None and (
             value < min or math.isnan(value)):
-        raise IllegalValueError(
+        raise RangeError(
             '{:} must be in range [{:}, +inf[. '
             '{:} found instead.'.format(name, min, value)
         )
     elif min is not None and max is not None and (
             value < min or value > max or math.isnan(value)):
-        raise IllegalValueError(
+        raise RangeError(
             '{:} must be in range [{:}, {:}]. '
             '{:} found instead.'.format(name, min, max, value)
         )
@@ -137,7 +138,7 @@ def limited_len(sized, min, max, name='Value', unit=''):
         if max < 0:
             max = 0
         if length < min or length > max:
-            raise IllegalValueError(
+            raise RangeError(
                 'Length of {:} must be in range [{:}, {:}]{:}. '
                 '{:} found instead.'.format(
                     name, min, max, unit or ' ' + unit, length)
@@ -151,7 +152,7 @@ def exact_len(sized, expected, name='Value', unit=''):
     if expected is None or expected < 0:
         expected = 0
     if length != expected:
-        raise IllegalValueError(
+        raise RangeError(
             'Length of {:} must be {:}{:}. '
             '{:} found instead.'.format(
                 name, expected, unit or ' ' + unit, length)
