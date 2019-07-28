@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# # Copyright © 2019, Matjaž Guštin <dev@matjaz.it> <https://matjaz.it>.
-# # Released under the BSD 3-Clause License
+# Copyright © 2019, Matjaž Guštin <dev@matjaz.it> <https://matjaz.it>.
+# Released under the BSD 3-Clause License
 
 import unittest
 
