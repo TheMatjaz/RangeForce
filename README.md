@@ -21,9 +21,11 @@ def classic_approach():
         return value
 
 # Same code, but simplified using Rangeforce
+import rangeforce as rf
+
 def with_rangeforce():
     value = int(input('Type a hex value: '), 16)
-    return rangeforce.limited_int(value, 0, 350)  # Here's the magic
+    return rf.limited(value, 0, 350)  # Here's the magic
 ```
 
 

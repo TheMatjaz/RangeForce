@@ -4,6 +4,26 @@
 # Copyright © 2019, Matjaž Guštin <dev@matjaz.it> <https://matjaz.it>.
 # Released under the BSD 3-Clause License
 
+"""Rangeforce, a developer-friendly range checks with user-friendly error
+messages.
+
+Rangeforce aims to simplify the input validation process where the error
+message of the exception is shown directly to the user and has to be
+understandable, which may happend in a command line interface or when using
+a Python program interactively from a Python shell.
+
+For example:
+
+        value = int(input('How many hours per day do you sleep? '))
+        value = rangeforce.limited(value, 0, 24, name='Hours of sleep')
+        # Now value is valid. Otherwise an error message like this appears:
+        # rangeforce.RangeError: Hours of sleep must be in range [0, 24]. 25 found instead.
+
+        # Expecially useful for values that need to fit within an integer type:
+        value = rangeforce.uint16(int(input('Type a 16-bit value: ')))
+        rangeforce.RangeError: Value must be in range [0, 65535]. 70000 found instead.
+"""
+
 import math
 
 __VERSION__ = 'v1.0.0'
