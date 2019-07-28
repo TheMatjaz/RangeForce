@@ -353,12 +353,105 @@ class TestLimited(unittest.TestCase):
         self.assertEqual(expected_message, str(ex.exception))
 
 
-class TestLimitedInt(unittest.TestCase):
-    pass
-    # TODO
-
-
 class TestLimitedLen(unittest.TestCase):
-    def test_upper_limit_only(self):
-        pass
-    # TODO
+    def test_in_closed_range(self):
+        for i in range(100):
+            self.assertEqual([2]*i, rf.limited_len([2]*i, 0, 99))
+
+    def test_in_open_range_upper_bound(self):
+        for i in range(100):
+            self.assertEqual([2]*i, rf.limited_len([2]*i, 0, None))
+
+    def test_in_open_range_on_lower_bound(self):
+        for i in range(100):
+            self.assertEqual([2]*i, rf.limited_len([2]*i, None, 99))
+
+    def test_below_closed_range(self):
+        expected_message = 'Length of value must be in range [100, 1000]. ' \
+                           '2 found instead.'
+        with self.assertRaises(rf.RangeError) as ex:
+            rf.limited_len([2]*2, 100, 1000)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_below_open_range_on_upper_bound(self):
+        expected_message = 'Length of value must be in range [100, +inf[. ' \
+                           '2 found instead.'
+        with self.assertRaises(rf.RangeError) as ex:
+            rf.limited_len([2]*2, 100, None)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_above_closed_range(self):
+        expected_message = 'Length of value must be in range [100, 1000]. ' \
+                           '2000 found instead.'
+        with self.assertRaises(rf.RangeError) as ex:
+            rf.limited_len([2]*2000, 100, 1000)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_above_open_range_on_lower_bound(self):
+        expected_message = 'Length of value must be in range ]-inf, 1000]. ' \
+                           '2000 found instead.'
+        with self.assertRaises(rf.RangeError) as ex:
+            rf.limited_len([2]*2000, None, 1000)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_custom_value_name(self):
+        expected_message = 'Length of HELLO must be in range [100, 1000]. ' \
+                           '2 found instead.'
+        with self.assertRaises(rf.RangeError) as ex:
+            rf.limited_len([2]*2, 100, 1000, 'HELLO')
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'Length of HELLO must be in range [100, +inf[. ' \
+                           '2 found instead.'
+        with self.assertRaises(rf.RangeError) as ex:
+            rf.limited_len([2]*2, 100, None, 'HELLO')
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'Length of HELLO must be in range [100, 1000]. ' \
+                           '2000 found instead.'
+        with self.assertRaises(rf.RangeError) as ex:
+            rf.limited_len([2]*2000, 100, 1000, 'HELLO')
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'Length of HELLO must be in range ]-inf, 1000]. ' \
+                           '2000 found instead.'
+        with self.assertRaises(rf.RangeError) as ex:
+            rf.limited_len([2]*2000, None, 1000, 'HELLO')
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_negative_min_length(self):
+        expected_message = 'Length lower bound must be non-negative. ' \
+                           '-2 found instead.'
+        with self.assertRaises(ValueError) as ex:
+            rf.limited_len([2]*2, -2, 10)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_negative_max_length(self):
+        expected_message = 'Length upper bound must be non-negative. ' \
+                           '-3 found instead.'
+        with self.assertRaises(ValueError) as ex:
+            rf.limited_len([2]*2, 0.0, -3)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_infinity_instead_of_none(self):
+        self.assertEqual([2]*10, rf.limited_len([2]*10, 2, float('+inf')))
+
+    def test_double_none(self):
+        expected_message = '[min, max] interval must be closed on at least ' \
+                           'one extreme.'
+        with self.assertRaises(ValueError) as ex:
+            rf.limited_len([2]*10, None, None)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_unsorted_bounds(self):
+        expected_message = 'Interval extremes [20, 15] not in order.'
+        with self.assertRaises(ValueError) as ex:
+            rf.limited_len([2]*10, 20, 15)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_nan_interval_extreme(self):
+        expected_message = 'NaN is not a valid interval upper bound.'
+        with self.assertRaises(ValueError) as ex:
+            rf.limited_len([2]*10, 5, float('nan'))
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'NaN is not a valid interval lower bound.'
+        with self.assertRaises(ValueError) as ex:
+            rf.limited_len([2]*10, float('nan'), 5)
+        self.assertEqual(expected_message, str(ex.exception))

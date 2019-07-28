@@ -125,27 +125,30 @@ def int32(value, name='Value'):
 
 
 def int64(value, name='Value'):
-    return limited(value, -0x8000000000000000, 0x7FFFFFFFFFFFFFFF, name, dtype=int)
+    return limited(value, -0x8000000000000000, 0x7FFFFFFFFFFFFFFF, name,
+                   dtype=int)
 
 
-def limited_len(sized, min, max, name='Value', unit=''):
+def limited_len(sized, min, max, name='value'):
     length = len(sized)
-    if min is None or min < 0:
-        min = 0
-    if max is not None:
-        if max < 0:
-            max = 0
-        if length < min or length > max:
-            raise RangeError(
-                'Length of {:} must be in range [{:}, {:}]{:}. '
-                '{:} found instead.'.format(
-                    name, min, max, unit or ' ' + unit, length)
-            )
-    else:
-        return sized
+    _validate_non_negative_interval_extremes(min, max)
+    limited(length, min, max, name='Length of '+name)
+    return sized
 
 
-def exact_len(sized, expected, name='Value', unit=''):
+def _validate_non_negative_interval_extremes(min, max):
+    if min is not None and min < 0:
+        raise ValueError(
+            'Length lower bound must be non-negative. ' \
+            '{:} found instead.'.format(min)
+        )
+    if max is not None and max < 0:
+        raise ValueError(
+            'Length upper bound must be non-negative. ' \
+            '{:} found instead.'.format(max)
+        )
+
+def exact_len(sized, expected, name='value'):
     length = len(sized)
     if expected is None or expected < 0:
         expected = 0
