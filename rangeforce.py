@@ -4,10 +4,10 @@
 # Copyright © 2019, Matjaž Guštin <dev@matjaz.it> <https://matjaz.it>.
 # Released under the BSD 3-Clause License
 
-"""Rangeforce, a developer-friendly range checks with user-friendly error
-messages.
+"""Rangeforce, a developer-friendly check for "is this value
+within the allowed range?" with user-friendly error messages.
 
-Rangeforce aims to simplify the input validation process where the error
+Rangeforce aims to simplify the input validation process  where the error
 message of the exception is shown directly to the user and has to be
 understandable, which may happend in a command line interface or when using
 a Python program interactively from a Python shell.
