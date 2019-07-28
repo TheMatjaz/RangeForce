@@ -132,29 +132,42 @@ def int64(value, name='Value'):
 def limited_len(sized, min, max, name='value'):
     length = len(sized)
     _validate_non_negative_interval_extremes(min, max)
-    limited(length, min, max, name='Length of '+name)
+    limited(length, min, max, name='Length of ' + name)
     return sized
 
 
 def _validate_non_negative_interval_extremes(min, max):
     if min is not None and min < 0:
         raise ValueError(
-            'Length lower bound must be non-negative. ' \
+            'Length lower bound must be non-negative. '
             '{:} found instead.'.format(min)
         )
-    if max is not None and max < 0:
+    elif max is not None and max < 0:
         raise ValueError(
-            'Length upper bound must be non-negative. ' \
+            'Length upper bound must be non-negative. '
             '{:} found instead.'.format(max)
         )
 
+
 def exact_len(sized, expected, name='value'):
     length = len(sized)
-    if expected is None or expected < 0:
-        expected = 0
+    _validate_expected_length(expected)
     if length != expected:
         raise RangeError(
-            'Length of {:} must be {:}{:}. '
-            '{:} found instead.'.format(
-                name, expected, unit or ' ' + unit, length)
+            'Length of {:} must be exactly {:}. '
+            '{:} found instead.'.format(name, expected, length)
+        )
+    return sized
+
+
+def _validate_expected_length(expected):
+    if not isinstance(expected, int):
+        raise TypeError(
+            'Expected length must be an integer. '
+            '{:} found instead.'.format(type(expected).__name__)
+        )
+    elif expected < 0:
+        raise ValueError(
+            'Expected length must be non-negative. '
+            '{:} found instead.'.format(expected)
         )
