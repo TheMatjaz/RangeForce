@@ -13,8 +13,3 @@ and this project adheres to
 ----------------------------------------
 
 Initial version.
-
-
-### Added
-
-- 
