@@ -4,6 +4,8 @@
 # Copyright © 2019, Matjaž Guštin <dev@matjaz.it> <https://matjaz.it>.
 # Released under the BSD 3-Clause License
 
+"""Unit tests of the rangeforce module."""
+
 import unittest
 
 import rangeforce as rf

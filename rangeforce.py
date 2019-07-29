@@ -9,7 +9,7 @@ within the allowed range?" with user-friendly error messages.
 
 Rangeforce aims to simplify the input validation process  where the error
 message of the exception is shown directly to the user and has to be
-understandable, which may happend in a command line interface or when using
+understandable, which may happened in a command line interface or when using
 a Python program interactively from a Python shell.
 
 For example:
@@ -327,6 +327,24 @@ def uint64(value, name='Value'):
 
 
 def uint_bits(value, bits, name='Value'):
+    """Validates that value fits in an unsigned integer of specified bitlength.
+
+    If the value is valid, it returns the value itself.
+    If the value is not valid, it raises a RangeError with an understandable
+    error message that includes expected range and failing value.
+
+    Args:
+        value: the value to be validated to be within [0, 2**bits-1]
+        name: customizable name of the value that appears in the error message
+
+    Returns:
+        the given value can be expressed in the given amount of  bits
+        (unsigned)
+
+    Raises:
+        RangeError: if the value is not within the acceptable range.
+        TypeError: if the value is not an integer.
+    """
     return limited(value, 0, (1 << bits) - 1, name, dtype=int)
 
 
