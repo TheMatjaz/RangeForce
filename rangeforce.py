@@ -26,7 +26,7 @@ For example:
 
 import math
 
-__VERSION__ = 'v1.0.0'
+__VERSION__ = '1.0.0'
 
 
 class RangeError(Exception):
