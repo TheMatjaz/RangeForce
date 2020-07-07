@@ -347,17 +347,49 @@ class TestExact(unittest.TestCase):
             self.assertEqual(i, rf.exactly(i, i))
 
     def test_not_exact(self):
+        expected_message = 'Value must be exactly 100. ' \
+                           '2 found instead.'
         with self.assertRaises(rf.RangeError) as ex:
             rf.exactly(2, 100)
+        self.assertEqual(expected_message, str(ex.exception))
 
     def test_everything_differs_from_nan(self):
+        expected_message = 'Value must be exactly NaN. ' \
+                           '2 found instead.'
         with self.assertRaises(rf.RangeError) as ex:
             rf.exactly(2, math.nan)
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'Value must be exactly NaN. ' \
+                           'inf found instead.'
         with self.assertRaises(rf.RangeError) as ex:
             rf.exactly(math.inf, math.nan)
+        self.assertEqual(expected_message, str(ex.exception))
 
     def test_nan_equal_to_nan(self):
         self.assertTrue(math.isnan(rf.exactly(math.nan, math.nan)))
+
+    def test_custom_value_name(self):
+        expected_message = 'HELLO must be exactly NaN. ' \
+                           '2 found instead.'
+        with self.assertRaises(rf.RangeError) as ex:
+            rf.exactly(2, math.nan, name='HELLO')
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'HELLO must be exactly 100. ' \
+                           '2 found instead.'
+        with self.assertRaises(rf.RangeError) as ex:
+            rf.exactly(2, 100, name='HELLO')
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_enforce_type(self):
+        self.assertEqual(2, rf.exactly(2, 2, dtype=int))
+        expected_message = 'Value must be of type int. float found instead.'
+        with self.assertRaises(TypeError) as ex:
+            rf.exactly(2.0, 2, dtype=int)
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'HELLO must be of type int. float found instead.'
+        with self.assertRaises(TypeError) as ex:
+            rf.exactly(2.0, 3, name='HELLO', dtype=int)
+        self.assertEqual(expected_message, str(ex.exception))
 
 
 class TestLimitedLen(unittest.TestCase):
