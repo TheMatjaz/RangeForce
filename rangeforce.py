@@ -17,11 +17,13 @@ For example:
         value = int(input('How many hours per day do you sleep? '))
         value = rangeforce.limited(value, 0, 24, name='Hours of sleep')
         # Now value is valid. Otherwise an error message like this appears:
-        # rangeforce.RangeError: Hours of sleep must be in range [0, 24]. 25 found instead.
+        # rangeforce.RangeError: Hours of sleep must be in range [0, 24]. 25
+        found instead.
 
         # Expecially useful for values that need to fit within an integer type:
         value = rangeforce.uint16(int(input('Type a 16-bit value: ')))
-        rangeforce.RangeError: Value must be in range [0, 65535]. 70000 found instead.
+        rangeforce.RangeError: Value must be in range [0, 65535]. 70000
+        found instead.
 """
 
 import math
@@ -58,6 +60,76 @@ def clip(value, min, max):
         return min
     elif value > max:
         return max
+    else:
+        return value
+
+
+def exactly(value, expected, name='Value', dtype=None):
+    """Validates that value is exactly equal to another one.
+
+    If the value is valid, it returns the value itself: this is also the case
+    for comparing NaN to NaN, to avoid having a separate function for it.
+    In other words: exactly(NaN, NaN) is valid, does not raise exceptions.
+
+    If the value is not valid, it raises a RangeError with an understandable
+    error message that includes expected and failing value.
+
+    The name of the value can be altered for a customized error message.
+
+    The data type can be enforced if specified.
+
+    Args:
+       value: the value to be validated to be within [min, max]
+       expected: only acceptable value. Not None. Can be NaN.
+       name: customizable name of the value that appears in the error message
+       dtype: optional data type the value has to be
+
+    Returns:
+       the given value if matching the expected value and, optionally, if of
+       the correct data type
+
+    Raises:
+       RangeError: if the value is not matching the expected one.
+       TypeError: if the value is not of the acceptable data type, if
+                  specified.
+
+    Examples:
+           >>> exactly(0.5, 0.5)  # Valid value
+           0.5
+           >>> exactly(500, 30)  # Incorrect value
+           rangeforce.RangeError: Value must be exactly 30. 500
+           found instead.
+           >>> exactly(50, 7, name='Days in a week')
+           rangeforce.RangeError: Days in a week must be exactly 7. 50 found
+           instead.
+           >>> exactly(42.0, math.nan)
+           rangeforce.RangeError: Value must be exactly NaN. 42.0
+           found instead..
+           >>> exactly(math.nan, math.nan)  # Valid equality, also for NaN
+           nan
+           >>> exactly(7.0, 7, name='Days in a week', dtype=int)
+           TypeError: Days in a week must be of type int. float found
+           instead.
+    """
+    _validate_type(name, value, dtype)
+    try:
+        if math.isnan(expected):
+            if math.isnan(value):
+                # NaN is EQUAL to NaN for this function.
+                return value
+            else:
+                raise RangeError(
+                    '{:} must be exactly NaN. '
+                    '{:} found instead.'.format(name, value)
+                )
+    except TypeError:
+        # Suppress math.isnan() applied to non-floats and just go on.
+        pass
+    if value != expected:
+        raise RangeError(
+            '{:} must be exactly {:}. '
+            '{:} found instead.'.format(name, expected, value)
+        )
     else:
         return value
 

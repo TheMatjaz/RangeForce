@@ -5,7 +5,7 @@
 # Released under the BSD 3-Clause License
 
 """Unit tests of the rangeforce module."""
-
+import math
 import unittest
 
 import rangeforce as rf
@@ -47,25 +47,25 @@ class TestUnsignedInts(unittest.TestCase):
     def test_uint8(self):
         self.assertRaises(rf.RangeError, rf.uint8, -1)
         self.assertRaises(rf.RangeError, rf.uint8, -20)
-        self.assertRaises(rf.RangeError, rf.uint8, 2**8)
+        self.assertRaises(rf.RangeError, rf.uint8, 2 ** 8)
         self.assertRaises(rf.RangeError, rf.uint8, 300)
-        for i in range(0, 2**8):
+        for i in range(0, 2 ** 8):
             self.assertEqual(i, rf.uint8(i))
             self.assertIs(i, rf.uint8(i))
 
     def test_uint16(self):
         self.assertRaises(rf.RangeError, rf.uint16, -1)
         self.assertRaises(rf.RangeError, rf.uint16, -20)
-        self.assertRaises(rf.RangeError, rf.uint16, 2**16)
+        self.assertRaises(rf.RangeError, rf.uint16, 2 ** 16)
         self.assertRaises(rf.RangeError, rf.uint16, 5446345)
-        for i in range(0, 2**16):
+        for i in range(0, 2 ** 16):
             self.assertEqual(i, rf.uint16(i))
             self.assertIs(i, rf.uint16(i))
 
     def test_uint32(self):
         self.assertRaises(rf.RangeError, rf.uint32, -1)
         self.assertRaises(rf.RangeError, rf.uint32, -20)
-        self.assertRaises(rf.RangeError, rf.uint32, 2**32)
+        self.assertRaises(rf.RangeError, rf.uint32, 2 ** 32)
         self.assertRaises(rf.RangeError, rf.uint32, 45874349824936)
         rf.uint32(0)
         rf.uint32(1)
@@ -79,14 +79,14 @@ class TestUnsignedInts(unittest.TestCase):
     def test_uint64(self):
         self.assertRaises(rf.RangeError, rf.uint64, -1)
         self.assertRaises(rf.RangeError, rf.uint64, -20)
-        self.assertRaises(rf.RangeError, rf.uint64, 2**64)
+        self.assertRaises(rf.RangeError, rf.uint64, 2 ** 64)
         self.assertRaises(rf.RangeError, rf.uint64,
                           345837634922573643925763492312573634)
         rf.uint64(0)
         rf.uint64(1)
         rf.uint64(2)
-        rf.uint64(2**64 - 2)
-        rf.uint64(2**64 - 1)
+        rf.uint64(2 ** 64 - 2)
+        rf.uint64(2 ** 64 - 1)
         for i in range(0, 0xFFFFFFFFFFFFFFFF, 30000000000000):
             self.assertEqual(i, rf.uint64(i))
             self.assertIs(i, rf.uint64(i))
@@ -106,26 +106,26 @@ class TestUnsignedInts(unittest.TestCase):
 
 class TestSignedInts(unittest.TestCase):
     def test_int8(self):
-        self.assertRaises(rf.RangeError, rf.int8, -2**7 - 1)
+        self.assertRaises(rf.RangeError, rf.int8, -2 ** 7 - 1)
         self.assertRaises(rf.RangeError, rf.int8, -150)
-        self.assertRaises(rf.RangeError, rf.int8, 2**7)
+        self.assertRaises(rf.RangeError, rf.int8, 2 ** 7)
         self.assertRaises(rf.RangeError, rf.int8, 1560)
         for i in range(-128, 127):
             self.assertEqual(i, rf.int8(i))
             self.assertIs(i, rf.int8(i))
 
     def test_int16(self):
-        self.assertRaises(rf.RangeError, rf.int16, -2**15 - 1)
+        self.assertRaises(rf.RangeError, rf.int16, -2 ** 15 - 1)
         self.assertRaises(rf.RangeError, rf.int16, -675832495)
-        self.assertRaises(rf.RangeError, rf.int16, 2**15)
+        self.assertRaises(rf.RangeError, rf.int16, 2 ** 15)
         self.assertRaises(rf.RangeError, rf.int16, 5446345)
         for i in range(-32768, 32767):
             self.assertEqual(i, rf.int16(i))
             self.assertIs(i, rf.int16(i))
 
     def test_int32(self):
-        self.assertRaises(rf.RangeError, rf.int32, -2**31 - 1)
-        self.assertRaises(rf.RangeError, rf.int32, 2**31)
+        self.assertRaises(rf.RangeError, rf.int32, -2 ** 31 - 1)
+        self.assertRaises(rf.RangeError, rf.int32, 2 ** 31)
         self.assertRaises(rf.RangeError, rf.int32, 45874349824936)
         rf.int32(-0x8000000)
         rf.int32(-0x8000000 + 1)
@@ -141,8 +141,8 @@ class TestSignedInts(unittest.TestCase):
             self.assertIs(i, rf.int32(i))
 
     def test_int64(self):
-        self.assertRaises(rf.RangeError, rf.int64, -2**64 - 1)
-        self.assertRaises(rf.RangeError, rf.int64, 2**64)
+        self.assertRaises(rf.RangeError, rf.int64, -2 ** 64 - 1)
+        self.assertRaises(rf.RangeError, rf.int64, 2 ** 64)
         self.assertRaises(rf.RangeError, rf.int64,
                           345837634922573643925763492312573634)
         rf.int64(-0x8000000000000000)
@@ -339,6 +339,25 @@ class TestLimited(unittest.TestCase):
         with self.assertRaises(TypeError) as ex:
             rf.limited(2.0, 0, 10, dtype=int)
         self.assertEqual(expected_message, str(ex.exception))
+
+
+class TestExact(unittest.TestCase):
+    def test_exact(self):
+        for i in range(-50, 50):
+            self.assertEqual(i, rf.exactly(i, i))
+
+    def test_not_exact(self):
+        with self.assertRaises(rf.RangeError) as ex:
+            rf.exactly(2, 100)
+
+    def test_everything_differs_from_nan(self):
+        with self.assertRaises(rf.RangeError) as ex:
+            rf.exactly(2, math.nan)
+        with self.assertRaises(rf.RangeError) as ex:
+            rf.exactly(math.inf, math.nan)
+
+    def test_nan_equal_to_nan(self):
+        self.assertTrue(math.isnan(rf.exactly(math.nan, math.nan)))
 
 
 class TestLimitedLen(unittest.TestCase):
