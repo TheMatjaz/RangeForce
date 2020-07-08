@@ -27,13 +27,16 @@ import rangeforce as rf
 def with_rangeforce():
     value = int(input('How many hours do you sleep per day? '))
     return rf.limited(value, 0, 24, 'Hours of sleep')  # Magically in 1 line
+    # In case of error it raises a RangeError with a simple readable message:
+    # rangeforce.RangeError: Hours of sleep must be in range [0, 24]. 42 found
+    # instead.
 ```
 
 
 Features
 ----------------------------------------
 
-- Validate that a value is within a [min, max] interval
+- Validate that a value is within a [min, max] interval or equal to another one
   - Including case when min is -infinity and max is +infinity
   - Optional enforcing of the type (e.g. the value must be a float)
 - Functions to validate that a value is an unsigned/signed integer
@@ -42,7 +45,8 @@ Features
 - Validation of the length of an object, either within a [min, max] interval
   or exact length
 - Utility function to clip (limit) a value to fit within a range 
-- Customizable name of the variable under validation for the error message 
+- Customisable name of the variable under validation for the error message
+- Customisable exception type raised (defaults to RangeError)
 
 
 
@@ -53,7 +57,9 @@ Installation
 pip install Rangeforce
 ```
 
-or just include the `rangeforce.py` file in your project (copy-paste).
+or just include the `rangeforce.py` file in your project (copy-paste). It's
+self-contained and has no dependencies other than the standard Python library
+(specifically `math`).
 
 
 
@@ -123,6 +129,14 @@ value = rf.uint64(20)
 distance = rf.uint8(-3, 'Distance')
 # This raises a RangeError with the message:
 # "Distance must be in range [0, 255]. -3 found instead."
+
+# Customize the exacption type raised:
+distance = rf.uint8(-3, 'Distance', ex=OverflowError)
+# This raises an OverflowError with the message:
+# "Distance must be in range [0, 255]. -3 found instead."
+
+# Compare two values for equality
+rf.exactly(42, 42, 'The answer')
 
 # To check the length range of anything (e.g. a list or bytes):
 value = rf.limited_len([1, 2, 3], 2, 7) # 'value' will hold [1, 2, 3]
