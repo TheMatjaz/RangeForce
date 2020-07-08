@@ -49,6 +49,7 @@ class TestUnsignedInts(unittest.TestCase):
         self.assertRaises(rf.RangeError, rf.uint8, -20)
         self.assertRaises(rf.RangeError, rf.uint8, 2 ** 8)
         self.assertRaises(rf.RangeError, rf.uint8, 300)
+        self.assertRaises(FileNotFoundError, rf.uint8, 300, ex=FileNotFoundError)
         for i in range(0, 2 ** 8):
             self.assertEqual(i, rf.uint8(i))
             self.assertIs(i, rf.uint8(i))
@@ -58,6 +59,7 @@ class TestUnsignedInts(unittest.TestCase):
         self.assertRaises(rf.RangeError, rf.uint16, -20)
         self.assertRaises(rf.RangeError, rf.uint16, 2 ** 16)
         self.assertRaises(rf.RangeError, rf.uint16, 5446345)
+        self.assertRaises(FileNotFoundError, rf.uint16, 5446345, ex=FileNotFoundError)
         for i in range(0, 2 ** 16):
             self.assertEqual(i, rf.uint16(i))
             self.assertIs(i, rf.uint16(i))
@@ -67,6 +69,7 @@ class TestUnsignedInts(unittest.TestCase):
         self.assertRaises(rf.RangeError, rf.uint32, -20)
         self.assertRaises(rf.RangeError, rf.uint32, 2 ** 32)
         self.assertRaises(rf.RangeError, rf.uint32, 45874349824936)
+        self.assertRaises(FileNotFoundError, rf.uint32, 45874349824936, ex=FileNotFoundError)
         rf.uint32(0)
         rf.uint32(1)
         rf.uint32(2)
@@ -82,6 +85,7 @@ class TestUnsignedInts(unittest.TestCase):
         self.assertRaises(rf.RangeError, rf.uint64, 2 ** 64)
         self.assertRaises(rf.RangeError, rf.uint64,
                           345837634922573643925763492312573634)
+        self.assertRaises(FileNotFoundError, rf.uint64, 345837634922573643925763492312573634, ex=FileNotFoundError)
         rf.uint64(0)
         rf.uint64(1)
         rf.uint64(2)
@@ -96,6 +100,7 @@ class TestUnsignedInts(unittest.TestCase):
         self.assertRaises(rf.RangeError, rf.uint_bits, 8, 2)
         self.assertRaises(rf.RangeError, rf.uint_bits, -1, 2)
         self.assertRaises(rf.RangeError, rf.uint_bits, -8, 2)
+        self.assertRaises(FileNotFoundError, rf.uint_bits, -8, 2, ex=FileNotFoundError)
         for i in range(0, 8):
             self.assertEqual(i, rf.uint_bits(i, 3))
             self.assertIs(i, rf.uint_bits(i, 3))
@@ -110,6 +115,7 @@ class TestSignedInts(unittest.TestCase):
         self.assertRaises(rf.RangeError, rf.int8, -150)
         self.assertRaises(rf.RangeError, rf.int8, 2 ** 7)
         self.assertRaises(rf.RangeError, rf.int8, 1560)
+        self.assertRaises(FileNotFoundError, rf.int8, 1560, ex=FileNotFoundError)
         for i in range(-128, 127):
             self.assertEqual(i, rf.int8(i))
             self.assertIs(i, rf.int8(i))
@@ -119,6 +125,7 @@ class TestSignedInts(unittest.TestCase):
         self.assertRaises(rf.RangeError, rf.int16, -675832495)
         self.assertRaises(rf.RangeError, rf.int16, 2 ** 15)
         self.assertRaises(rf.RangeError, rf.int16, 5446345)
+        self.assertRaises(FileNotFoundError, rf.int16, 5446345, ex=FileNotFoundError)
         for i in range(-32768, 32767):
             self.assertEqual(i, rf.int16(i))
             self.assertIs(i, rf.int16(i))
@@ -127,6 +134,7 @@ class TestSignedInts(unittest.TestCase):
         self.assertRaises(rf.RangeError, rf.int32, -2 ** 31 - 1)
         self.assertRaises(rf.RangeError, rf.int32, 2 ** 31)
         self.assertRaises(rf.RangeError, rf.int32, 45874349824936)
+        self.assertRaises(FileNotFoundError, rf.int32, 45874349824936, ex=FileNotFoundError)
         rf.int32(-0x8000000)
         rf.int32(-0x8000000 + 1)
         rf.int32(-2)
@@ -145,6 +153,7 @@ class TestSignedInts(unittest.TestCase):
         self.assertRaises(rf.RangeError, rf.int64, 2 ** 64)
         self.assertRaises(rf.RangeError, rf.int64,
                           345837634922573643925763492312573634)
+        self.assertRaises(FileNotFoundError, rf.int64, 345837634922573643925763492312573634, ex=FileNotFoundError)
         rf.int64(-0x8000000000000000)
         rf.int64(-0x8000000000000000 + 1)
         rf.int64(-2)
@@ -165,12 +174,14 @@ class TestNegativePositiveInt(unittest.TestCase):
         self.assertRaises(rf.RangeError, rf.negative_int, 0)
         self.assertRaises(rf.RangeError, rf.negative_int, 1)
         self.assertRaises(rf.RangeError, rf.negative_int, 100)
+        self.assertRaises(FileNotFoundError, rf.negative_int, 100, ex=FileNotFoundError)
         self.assertEqual(-20, rf.negative_int(-20))
         self.assertIs(-20, rf.negative_int(-20))
 
     def test_nonpositive_int(self):
         self.assertRaises(rf.RangeError, rf.nonpositive_int, 1)
         self.assertRaises(rf.RangeError, rf.nonpositive_int, 100)
+        self.assertRaises(FileNotFoundError, rf.nonpositive_int, 100, ex=FileNotFoundError)
         self.assertEqual(-20, rf.nonpositive_int(-20))
         self.assertIs(-20, rf.nonpositive_int(-20))
         self.assertEqual(0, rf.nonpositive_int(0))
@@ -180,12 +191,14 @@ class TestNegativePositiveInt(unittest.TestCase):
         self.assertRaises(rf.RangeError, rf.positive_int, 0)
         self.assertRaises(rf.RangeError, rf.positive_int, -1)
         self.assertRaises(rf.RangeError, rf.positive_int, -100)
+        self.assertRaises(FileNotFoundError, rf.positive_int, -100, ex=FileNotFoundError)
         self.assertEqual(20, rf.positive_int(20))
         self.assertIs(20, rf.positive_int(20))
 
     def test_nonnegative_int(self):
         self.assertRaises(rf.RangeError, rf.nonnegative_int, -1)
         self.assertRaises(rf.RangeError, rf.nonnegative_int, -100)
+        self.assertRaises(FileNotFoundError, rf.nonnegative_int, -100, ex=FileNotFoundError)
         self.assertEqual(20, rf.nonnegative_int(20))
         self.assertIs(20, rf.nonnegative_int(20))
         self.assertEqual(0, rf.nonnegative_int(0))
