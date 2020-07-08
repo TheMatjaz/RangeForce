@@ -64,32 +64,35 @@ def clip(value, min, max):
         return value
 
 
-def exactly(value, expected, name='Value', dtype=None):
+def exactly(value, expected, name='Value', dtype=None, ex=RangeError):
     """Validates that value is exactly equal to another one.
 
     If the value is valid, it returns the value itself: this is also the case
     for comparing NaN to NaN, to avoid having a separate function for it.
     In other words: exactly(NaN, NaN) is valid, does not raise exceptions.
 
-    If the value is not valid, it raises a RangeError with an understandable
-    error message that includes expected and failing value.
+    If the value is not valid, it raises an exception of type ex with an
+    understandable error message that includes expected and failing value.
 
     The name of the value can be altered for a customized error message.
 
     The data type can be enforced if specified.
+
+    The exception class can be altered to a custom one.
 
     Args:
        value: the value to be validated to be within [min, max]
        expected: only acceptable value. Not None. Can be NaN.
        name: customizable name of the value that appears in the error message
        dtype: optional data type the value has to be
+       ex: exception type to throw in case the value is out of range
 
     Returns:
        the given value if matching the expected value and, optionally, if of
        the correct data type
 
     Raises:
-       RangeError: if the value is not matching the expected one.
+       RangeError or type(ex): if the value is not matching the expected one.
        TypeError: if the value is not of the acceptable data type, if
                   specified.
 
@@ -110,6 +113,8 @@ def exactly(value, expected, name='Value', dtype=None):
            >>> exactly(7.0, 7, name='Days in a week', dtype=int)
            TypeError: Days in a week must be of type int. float found
            instead.
+           >>> exactly(7.0, 7, name='Days in a week', ex=ValueError)
+           ValueError: Days in a week must be exactly 7. 50 found instead.
     """
     _validate_type(name, value, dtype)
     try:
@@ -118,7 +123,7 @@ def exactly(value, expected, name='Value', dtype=None):
                 # NaN is EQUAL to NaN for this function.
                 return value
             else:
-                raise RangeError(
+                raise ex(
                     '{:} must be exactly NaN. '
                     '{:} found instead.'.format(name, value)
                 )
@@ -126,7 +131,7 @@ def exactly(value, expected, name='Value', dtype=None):
         # Suppress math.isnan() applied to non-floats and just go on.
         pass
     if value != expected:
-        raise RangeError(
+        raise ex(
             '{:} must be exactly {:}. '
             '{:} found instead.'.format(name, expected, value)
         )
@@ -134,11 +139,11 @@ def exactly(value, expected, name='Value', dtype=None):
         return value
 
 
-def limited(value, min, max, name='Value', dtype=None):
+def limited(value, min, max, name='Value', dtype=None, ex=RangeError):
     """Validates that value is within the [min, max] interval.
 
     If the value is valid, it returns the value itself.
-    If the value is not valid, it raises a RangeError with an understandable
+    If the value is not valid, it raises an exeption with an understandable
     error message that includes expected range and failing value.
 
     Either min or max can be set to None for an unbound validity interval, i.e.
@@ -149,6 +154,8 @@ def limited(value, min, max, name='Value', dtype=None):
 
     The data type can be enforced if specified.
 
+    The exception class can be altered to a custom one.
+
     Args:
         value: the value to be validated to be within [min, max]
         min: smallest acceptable value. Can be None if max is not None.
@@ -157,13 +164,15 @@ def limited(value, min, max, name='Value', dtype=None):
              Can be +inf, -inf. Cannot be NaN. Must be >= min.
         name: customizable name of the value that appears in the error message
         dtype: optional data type the value has to be
+        ex: exception type to throw in case the value is out of range
 
     Returns:
         the given value if within [min, max] and, optionally, of the correct
         data type
 
     Raises:
-        RangeError: if the value is not within the acceptable range.
+        RangeError or type(ex): if the value is not within the acceptable
+                                range.
         TypeError: if the value is not of the acceptable data type, if
                    specified.
         ValueError: if the min, max extremes are not valid (e.g. both None,
@@ -176,31 +185,34 @@ def limited(value, min, max, name='Value', dtype=None):
             rangeforce.RangeError: Value must be in range [0.1, -42]. 500
             found instead.
             >>> limited(50, 0, 24, name='Hours in a day')
-            rangeforce.RangeError: Hours in a day must be in range [0,
-            24]. 50 found instead.
+            rangeforce.RangeError: Hours in a day must be in range [0, 24]. 50
+            found instead.
             >>> limited(-1, 0, None, name='Earth satellites')
-            rangeforce.RangeError: Earth satellites must be in range [0,
-            +inf[. -1 found instead.
+            rangeforce.RangeError: Earth satellites must be in range [0, +inf[.
+            -1 found instead.
             >>> limited(1.1, 0, None, name='Earth satellites', dtype=int)
             TypeError: Earth satellites must be of type int. float found
+            instead.
+            >>> limited(1.1, 0, None, name='Earth satellites', ex=ValueError)
+            ValueError: Earth satellites must be in range [0, +inf[. -1 found
             instead.
     """
     _validate_interval(min, max)
     _validate_type(name, value, dtype)
     if min is None and max is not None and (value > max or math.isnan(value)):
-        raise RangeError(
+        raise ex(
             '{:} must be in range ]-inf, {:}]. '
             '{:} found instead.'.format(name, max, value)
         )
     elif max is None and min is not None and (
             value < min or math.isnan(value)):
-        raise RangeError(
+        raise ex(
             '{:} must be in range [{:}, +inf[. '
             '{:} found instead.'.format(name, min, value)
         )
     elif min is not None and max is not None and (
             value < min or value > max or math.isnan(value)):
-        raise RangeError(
+        raise ex(
             '{:} must be in range [{:}, {:}]. '
             '{:} found instead.'.format(name, min, max, value)
         )
@@ -506,11 +518,11 @@ def int64(value, name='Value'):
                    dtype=int)
 
 
-def limited_len(sized, min, max, name='value'):
+def limited_len(sized, min, max, name='value', ex=RangeError):
     """Validates that value has a length within the [min, max] interval.
 
     If the sized value is valid, it returns the value itself.
-    If the sized value is not valid, it raises a RangeError with an
+    If the sized value is not valid, it raises an exception with an
     understandable error message that includes expected length range and
     failing sized value.
 
@@ -520,6 +532,8 @@ def limited_len(sized, min, max, name='value'):
 
     The name of the sized value can be altered for a customized error message.
 
+    The exception class can be altered to a custom one.
+
     Args:
         sized: the value whose length is to be validated to be within
                [min, max]
@@ -528,13 +542,14 @@ def limited_len(sized, min, max, name='value'):
         max: greatest acceptable length. Can be None if min is not None.
              Can be +inf, -inf. Cannot be NaN. Must be >= min and >= 0.
         name: customizable name of the value that appears in the error message
+        ex: exception type to throw in case the value is out of range
 
     Returns:
         the given sized value if has length within [min, max]
 
     Raises:
-        RangeError: if the value does not have a length within the acceptable
-                    range.
+        RangeError or type(ex): if the value does not have a length within the
+                                acceptable range.
         ValueError: if the min, max extremes are not valid (e.g. negative,
                     both None, min greater than max, NaN etc.)
 
@@ -550,10 +565,12 @@ def limited_len(sized, min, max, name='value'):
             >>> limited_len([1, 2, 3], 10, None)
             rangeforce.RangeError: Length of value must be in range [10,
             +inf[. 3 found instead.
+            >>> limited_len([1, 2, 3], 10, 20, ex=ValueError)
+            ValueError: Length of value must be in range [10, 20]. 3 found
+            instead.
     """
-    length = len(sized)
     _validate_non_negative_interval_extremes(min, max)
-    limited(length, min, max, name='Length of ' + name)
+    limited(len(sized), min, max, name='Length of ' + name, ex=ex)
     return sized
 
 
@@ -570,29 +587,33 @@ def _validate_non_negative_interval_extremes(min, max):
         )
 
 
-def exact_len(sized, expected, name='value'):
+def exact_len(sized, expected, name='value', ex=RangeError):
     """Validates that value has an exact length.
 
     If the sized value is valid, it returns the value itself.
-    If the sized value is not valid, it raises a RangeError with an
-    understandable error message that includes expected length and
-    failing sized value.
+    If the sized value is not valid, it raises an exception with an
+    understandable error message that includes expected length and failing
+    sized value.
 
     The name of the sized value can be altered for a customized error message.
+
+    The exception class can be altered to a custom one.
 
     Args:
         sized: the value whose length is to be validated to be exactly as
                expected.
         expected: only acceptable length. Must be an integer >= 0.
         name: customizable name of the value that appears in the error message
+        ex: exception type to throw in case the value is out of range
 
     Returns:
         the given sized value if has length matching the expected
 
     Raises:
-        RangeError: if the value does not have a length matching the expected.
-        ValueError: if the expected length is not valid (e.g. not integer,
-                    negative, None)
+        RangeError or type(ex): if the value does not have a length matching
+                                the expected.
+        TypeError: if the expected length is not an integer
+        ValueError: if the expected length is negative
 
     Examples:
             >>> exact_len([1, 2, 3], 3)  # Valid value
@@ -603,11 +624,13 @@ def exact_len(sized, expected, name='value'):
             >>> exact_len([1], 2, name='pairs')
             rangeforce.RangeError: Length of pairs must be exactly 2. 1
             found instead.
+            >>> exact_len([1], 2, name='pairs', ex=ValueError)
+            ValueError: Length of pairs must be exactly 2. 1 found instead.
     """
     length = len(sized)
     _validate_expected_length(expected)
     if length != expected:
-        raise RangeError(
+        raise ex(
             'Length of {:} must be exactly {:}. '
             '{:} found instead.'.format(name, expected, length)
         )

@@ -340,6 +340,24 @@ class TestLimited(unittest.TestCase):
             rf.limited(2.0, 0, 10, dtype=int)
         self.assertEqual(expected_message, str(ex.exception))
 
+    def test_custom_exception_type(self):
+        expected_message = 'Value must be in range [100, 1000]. ' \
+                           '2 found instead.'
+        with self.assertRaises(FileNotFoundError) as ex:
+            rf.limited(2, 100, 1000, ex=FileNotFoundError)
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'HELLO must be in range [100, 1000]. ' \
+                           '2 found instead.'
+        with self.assertRaises(FileNotFoundError) as ex:
+            rf.limited(2, 100, 1000, name='HELLO', ex=FileNotFoundError)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_custom_exception_type_does_not_affect_dtype(self):
+        with self.assertRaises(FileNotFoundError) as ex:
+            rf.limited(2.0, 100, 1000, dtype=float, ex=FileNotFoundError)
+        with self.assertRaises(TypeError) as ex:
+            rf.limited(2.0, 100, 1000, dtype=int, ex=FileNotFoundError)
+
 
 class TestExact(unittest.TestCase):
     def test_exact(self):
@@ -390,6 +408,24 @@ class TestExact(unittest.TestCase):
         with self.assertRaises(TypeError) as ex:
             rf.exactly(2.0, 3, name='HELLO', dtype=int)
         self.assertEqual(expected_message, str(ex.exception))
+
+    def test_custom_exception_type(self):
+        expected_message = 'Value must be exactly 100. ' \
+                           '2 found instead.'
+        with self.assertRaises(FileNotFoundError) as ex:
+            rf.exactly(2, 100, ex=FileNotFoundError)
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'HELLO must be exactly 100. ' \
+                           '2 found instead.'
+        with self.assertRaises(FileNotFoundError) as ex:
+            rf.exactly(2, 100, name='HELLO', ex=FileNotFoundError)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_custom_exception_type_does_not_affect_dtype(self):
+        with self.assertRaises(FileNotFoundError) as ex:
+            rf.exactly(2.0, 100, dtype=float, ex=FileNotFoundError)
+        with self.assertRaises(TypeError) as ex:
+            rf.exactly(2.0, 100, dtype=int, ex=FileNotFoundError)
 
 
 class TestLimitedLen(unittest.TestCase):
@@ -495,6 +531,18 @@ class TestLimitedLen(unittest.TestCase):
             rf.limited_len([2] * 10, float('nan'), 5)
         self.assertEqual(expected_message, str(ex.exception))
 
+    def test_custom_exception_type(self):
+        expected_message = 'Length of value must be in range [100, 1000]. ' \
+                           '1 found instead.'
+        with self.assertRaises(FileNotFoundError) as ex:
+            rf.limited_len([2], 100, 1000, ex=FileNotFoundError)
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'Length of HELLO must be in range [100, 1000]. ' \
+                           '1 found instead.'
+        with self.assertRaises(FileNotFoundError) as ex:
+            rf.limited_len([2], 100, 1000, name='HELLO', ex=FileNotFoundError)
+        self.assertEqual(expected_message, str(ex.exception))
+
 
 class TestExactLen(unittest.TestCase):
     def test_proper_length(self):
@@ -556,4 +604,16 @@ class TestExactLen(unittest.TestCase):
                            'float found instead.'
         with self.assertRaises(TypeError) as ex:
             rf.exact_len([2] * 2, float('nan'))
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_custom_exception_type(self):
+        expected_message = 'Length of value must be exactly 100. ' \
+                           '1 found instead.'
+        with self.assertRaises(FileNotFoundError) as ex:
+            rf.exact_len([2], 100, ex=FileNotFoundError)
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'Length of HELLO must be exactly 100. ' \
+                           '1 found instead.'
+        with self.assertRaises(FileNotFoundError) as ex:
+            rf.exact_len([2], 100, name='HELLO', ex=FileNotFoundError)
         self.assertEqual(expected_message, str(ex.exception))
