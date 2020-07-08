@@ -20,7 +20,7 @@ For example:
         # rangeforce.RangeError: Hours of sleep must be in range [0, 24]. 25
         found instead.
 
-        # Expecially useful for values that need to fit within an integer type:
+        # Especially useful for values that need to fit within an integer type:
         value = rangeforce.uint16(int(input('Type a 16-bit value: ')))
         rangeforce.RangeError: Value must be in range [0, 65535]. 70000
         found instead.
@@ -435,6 +435,8 @@ def uint_bits(value, bits, name='Value', ex=RangeError):
 
     Args:
         value: the value to be validated to be within [0, 2**bits-1]
+        bits: integer, positive number of bits determining the size and thus
+              the range of the value
         name: customizable name of the value that appears in the error message
         ex: exception type to throw in case the value is out of range
 
