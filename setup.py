@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2019, Matjaž Guštin <dev@matjaz.it> <https://matjaz.it>.
+# Copyright © 2019-2020, Matjaž Guštin <dev@matjaz.it> <https://matjaz.it>.
 # Released under the BSD 3-Clause License
 
 """Package setup for the Rangeforce library."""
