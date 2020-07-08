@@ -71,9 +71,11 @@ import rangeforce as rf
 
 value = rf.limited(8000, 20, 5000, dtype=int)
 # If successful, value will held 8000, otherwise (as it would happen in this
-# example) raises a rangeforce.RangeError with a useful message:
+# example) raises a rangeforce.RangeError (or another custom exception)
+# with a useful message:
 # "Value must be in range [20, 5000]. 8000 found instead."
-# Can be also shown directly to the user:
+# 
+# The message is ready to be shown directly to the user:
 
 try:
     value = rf.limited(8000, 20, 5000, dtype=int)
@@ -136,7 +138,7 @@ distance = rf.uint8(-3, 'Distance', ex=OverflowError)
 # "Distance must be in range [0, 255]. -3 found instead."
 
 # Compare two values for equality
-rf.exactly(42, 42, 'The answer')
+answer = rf.exactly(42, 42, 'The answer')
 
 # To check the length range of anything (e.g. a list or bytes):
 value = rf.limited_len([1, 2, 3], 2, 7) # 'value' will hold [1, 2, 3]
