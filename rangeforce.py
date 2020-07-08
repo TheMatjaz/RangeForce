@@ -242,7 +242,7 @@ def _validate_type(name, value, dtype):
         )
 
 
-def negative_int(value, name='Value'):
+def negative_int(value, name='Value', ex=RangeError):
     """Validates that value is negative (< 0) and of type int.
 
     If the value is valid, it returns the value itself.
@@ -252,18 +252,20 @@ def negative_int(value, name='Value'):
     Args:
         value: the value to be validated to be within ]-inf, 0[
         name: customizable name of the value that appears in the error message
+        ex: exception type to throw in case the value is out of range
 
     Returns:
         the given value if < 0
 
     Raises:
-        RangeError: if the value is not within the acceptable range.
+        RangeError or type(ex): if the value is not within the acceptable
+                                range.
         TypeError: if the value is not an integer.
     """
-    return limited(value, None, -1, name, dtype=int)
+    return limited(value, None, -1, name, dtype=int, ex=ex)
 
 
-def nonpositive_int(value, name='Value'):
+def nonpositive_int(value, name='Value', ex=RangeError):
     """Validates that value is non-positive (<= 0) and of type int.
 
     If the value is valid, it returns the value itself.
@@ -273,18 +275,20 @@ def nonpositive_int(value, name='Value'):
     Args:
         value: the value to be validated to be within ]-inf, 0]
         name: customizable name of the value that appears in the error message
+        ex: exception type to throw in case the value is out of range
 
     Returns:
         the given value if <= 0
 
     Raises:
-        RangeError: if the value is not within the acceptable range.
+        RangeError or type(ex): if the value is not within the acceptable
+                                range.
         TypeError: if the value is not an integer.
     """
-    return limited(value, None, 0, name, dtype=int)
+    return limited(value, None, 0, name, dtype=int, ex=ex)
 
 
-def positive_int(value, name='Value'):
+def positive_int(value, name='Value', ex=RangeError):
     """Validates that value is positive (> 0) and of type int.
 
     If the value is valid, it returns the value itself.
@@ -294,18 +298,20 @@ def positive_int(value, name='Value'):
     Args:
         value: the value to be validated to be within ]0, +inf[
         name: customizable name of the value that appears in the error message
+        ex: exception type to throw in case the value is out of range
 
     Returns:
         the given value if > 0
 
     Raises:
-        RangeError: if the value is not within the acceptable range.
+        RangeError or type(ex): if the value is not within the acceptable
+                                range.
         TypeError: if the value is not an integer.
     """
-    return limited(value, 1, None, name, dtype=int)
+    return limited(value, 1, None, name, dtype=int, ex=ex)
 
 
-def nonnegative_int(value, name='Value'):
+def nonnegative_int(value, name='Value', ex=RangeError):
     """Validates that value is non-negative (>= 0) and of type int.
 
     If the value is valid, it returns the value itself.
@@ -315,18 +321,20 @@ def nonnegative_int(value, name='Value'):
     Args:
         value: the value to be validated to be within [0, +inf[
         name: customizable name of the value that appears in the error message
+        ex: exception type to throw in case the value is out of range
 
     Returns:
         the given value if >= 0
 
     Raises:
-        RangeError: if the value is not within the acceptable range.
+        RangeError or type(ex): if the value is not within the acceptable
+                                range.
         TypeError: if the value is not an integer.
     """
-    return limited(value, 0, None, name, dtype=int)
+    return limited(value, 0, None, name, dtype=int, ex=ex)
 
 
-def uint8(value, name='Value'):
+def uint8(value, name='Value', ex=RangeError):
     """Validates that value fits in an 8-bit unsigned integer.
 
     If the value is valid, it returns the value itself.
@@ -336,18 +344,20 @@ def uint8(value, name='Value'):
     Args:
         value: the value to be validated to be within [0, 255]
         name: customizable name of the value that appears in the error message
+        ex: exception type to throw in case the value is out of range
 
     Returns:
         the given value can be expressed in 8 bits (unsigned)
 
     Raises:
-        RangeError: if the value is not within the acceptable range.
+        RangeError or type(ex): if the value is not within the acceptable
+                                range.
         TypeError: if the value is not an integer.
     """
-    return limited(value, 0, 0xFF, name, dtype=int)
+    return limited(value, 0, 0xFF, name, dtype=int, ex=ex)
 
 
-def uint16(value, name='Value'):
+def uint16(value, name='Value', ex=RangeError):
     """Validates that value fits in a 16-bit unsigned integer.
 
     If the value is valid, it returns the value itself.
@@ -357,18 +367,20 @@ def uint16(value, name='Value'):
     Args:
         value: the value to be validated to be within [0, 65535]
         name: customizable name of the value that appears in the error message
+        ex: exception type to throw in case the value is out of range
 
     Returns:
         the given value can be expressed in 16 bits (unsigned)
 
     Raises:
-        RangeError: if the value is not within the acceptable range.
+        RangeError or type(ex): if the value is not within the acceptable
+                                range.
         TypeError: if the value is not an integer.
     """
-    return limited(value, 0, 0xFFFF, name, dtype=int)
+    return limited(value, 0, 0xFFFF, name, dtype=int, ex=ex)
 
 
-def uint32(value, name='Value'):
+def uint32(value, name='Value', ex=RangeError):
     """Validates that value fits in a 32-bit unsigned integer.
 
     If the value is valid, it returns the value itself.
@@ -378,18 +390,20 @@ def uint32(value, name='Value'):
     Args:
         value: the value to be validated to be within [0, 4294967295]
         name: customizable name of the value that appears in the error message
+        ex: exception type to throw in case the value is out of range
 
     Returns:
         the given value can be expressed in 32 bits (unsigned)
 
     Raises:
-        RangeError: if the value is not within the acceptable range.
+        RangeError or type(ex): if the value is not within the acceptable
+                                range.
         TypeError: if the value is not an integer.
     """
-    return limited(value, 0, 0xFFFFFFFF, name, dtype=int)
+    return limited(value, 0, 0xFFFFFFFF, name, dtype=int, ex=ex)
 
 
-def uint64(value, name='Value'):
+def uint64(value, name='Value', ex=RangeError):
     """Validates that value fits in a 64-bit unsigned integer.
 
     If the value is valid, it returns the value itself.
@@ -399,18 +413,20 @@ def uint64(value, name='Value'):
     Args:
         value: the value to be validated to be within [0, 18446744073709551615]
         name: customizable name of the value that appears in the error message
+        ex: exception type to throw in case the value is out of range
 
     Returns:
         the given value can be expressed in 64 bits (unsigned)
 
     Raises:
-        RangeError: if the value is not within the acceptable range.
+        RangeError or type(ex): if the value is not within the acceptable
+                                range.
         TypeError: if the value is not an integer.
     """
-    return limited(value, 0, 0xFFFFFFFFFFFFFFFF, name, dtype=int)
+    return limited(value, 0, 0xFFFFFFFFFFFFFFFF, name, dtype=int, ex=ex)
 
 
-def uint_bits(value, bits, name='Value'):
+def uint_bits(value, bits, name='Value', ex=RangeError):
     """Validates that value fits in an unsigned integer of specified bitlength.
 
     If the value is valid, it returns the value itself.
@@ -420,19 +436,21 @@ def uint_bits(value, bits, name='Value'):
     Args:
         value: the value to be validated to be within [0, 2**bits-1]
         name: customizable name of the value that appears in the error message
+        ex: exception type to throw in case the value is out of range
 
     Returns:
         the given value can be expressed in the given amount of  bits
         (unsigned)
 
     Raises:
-        RangeError: if the value is not within the acceptable range.
+        RangeError or type(ex): if the value is not within the acceptable
+                                range.
         TypeError: if the value is not an integer.
     """
-    return limited(value, 0, (1 << bits) - 1, name, dtype=int)
+    return limited(value, 0, (1 << bits) - 1, name, dtype=int, ex=ex)
 
 
-def int8(value, name='Value'):
+def int8(value, name='Value', ex=RangeError):
     """Validates that value fits in an 8-bit signed integer.
 
     If the value is valid, it returns the value itself.
@@ -442,18 +460,20 @@ def int8(value, name='Value'):
     Args:
         value: the value to be validated to be within [-128, 127]
         name: customizable name of the value that appears in the error message
+        ex: exception type to throw in case the value is out of range
 
     Returns:
         the given value can be expressed in 8 bits (signed)
 
     Raises:
-        RangeError: if the value is not within the acceptable range.
+        RangeError or type(ex): if the value is not within the acceptable
+                                range.
         TypeError: if the value is not an integer.
     """
-    return limited(value, -0x80, 0x7F, name, dtype=int)
+    return limited(value, -0x80, 0x7F, name, dtype=int, ex=ex)
 
 
-def int16(value, name='Value'):
+def int16(value, name='Value', ex=RangeError):
     """Validates that value fits in a 16-bit signed integer.
 
     If the value is valid, it returns the value itself.
@@ -463,18 +483,20 @@ def int16(value, name='Value'):
     Args:
         value: the value to be validated to be within [-32768, 32767]
         name: customizable name of the value that appears in the error message
+        ex: exception type to throw in case the value is out of range
 
     Returns:
         the given value can be expressed in 16 bits (signed)
 
     Raises:
-        RangeError: if the value is not within the acceptable range.
+        RangeError or type(ex): if the value is not within the acceptable
+                                range.
         TypeError: if the value is not an integer.
     """
-    return limited(value, -0x8000, 0x7FFF, name, dtype=int)
+    return limited(value, -0x8000, 0x7FFF, name, dtype=int, ex=ex)
 
 
-def int32(value, name='Value'):
+def int32(value, name='Value', ex=RangeError):
     """Validates that value fits in a 32-bit signed integer.
 
     If the value is valid, it returns the value itself.
@@ -484,18 +506,20 @@ def int32(value, name='Value'):
     Args:
         value: the value to be validated to be within [-2147483648, 2147483647]
         name: customizable name of the value that appears in the error message
+        ex: exception type to throw in case the value is out of range
 
     Returns:
         the given value can be expressed in 32 bits (signed)
 
     Raises:
-        RangeError: if the value is not within the acceptable range.
+        RangeError or type(ex): if the value is not within the acceptable
+                                range.
         TypeError: if the value is not an integer.
     """
-    return limited(value, -0x80000000, 0x7FFFFFFF, name, dtype=int)
+    return limited(value, -0x80000000, 0x7FFFFFFF, name, dtype=int, ex=ex)
 
 
-def int64(value, name='Value'):
+def int64(value, name='Value', ex=RangeError):
     """Validates that value fits in a 16-bit signed integer.
 
     If the value is valid, it returns the value itself.
@@ -506,16 +530,18 @@ def int64(value, name='Value'):
         value: the value to be validated to be within [-9223372036854775808,
                9223372036854775807]
         name: customizable name of the value that appears in the error message
+        ex: exception type to throw in case the value is out of range
 
     Returns:
         the given value can be expressed in 64 bits (signed)
 
     Raises:
-        RangeError: if the value is not within the acceptable range.
+        RangeError or type(ex): if the value is not within the acceptable
+                                range.
         TypeError: if the value is not an integer.
     """
     return limited(value, -0x8000000000000000, 0x7FFFFFFFFFFFFFFF, name,
-                   dtype=int)
+                   dtype=int, ex=ex)
 
 
 def limited_len(sized, min, max, name='value', ex=RangeError):
