@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2019, Matjaž Guštin <dev@matjaz.it> <https://matjaz.it>.
+# Copyright © 2019-2020, Matjaž Guštin <dev@matjaz.it> <https://matjaz.it>.
 # Released under the BSD 3-Clause License
 
 """Unit tests of the rangeforce module."""
-
+import math
 import unittest
 
 import rangeforce as rf
@@ -47,26 +47,29 @@ class TestUnsignedInts(unittest.TestCase):
     def test_uint8(self):
         self.assertRaises(rf.RangeError, rf.uint8, -1)
         self.assertRaises(rf.RangeError, rf.uint8, -20)
-        self.assertRaises(rf.RangeError, rf.uint8, 2**8)
+        self.assertRaises(rf.RangeError, rf.uint8, 2 ** 8)
         self.assertRaises(rf.RangeError, rf.uint8, 300)
-        for i in range(0, 2**8):
+        self.assertRaises(FileNotFoundError, rf.uint8, 300, ex=FileNotFoundError)
+        for i in range(0, 2 ** 8):
             self.assertEqual(i, rf.uint8(i))
             self.assertIs(i, rf.uint8(i))
 
     def test_uint16(self):
         self.assertRaises(rf.RangeError, rf.uint16, -1)
         self.assertRaises(rf.RangeError, rf.uint16, -20)
-        self.assertRaises(rf.RangeError, rf.uint16, 2**16)
+        self.assertRaises(rf.RangeError, rf.uint16, 2 ** 16)
         self.assertRaises(rf.RangeError, rf.uint16, 5446345)
-        for i in range(0, 2**16):
+        self.assertRaises(FileNotFoundError, rf.uint16, 5446345, ex=FileNotFoundError)
+        for i in range(0, 2 ** 16):
             self.assertEqual(i, rf.uint16(i))
             self.assertIs(i, rf.uint16(i))
 
     def test_uint32(self):
         self.assertRaises(rf.RangeError, rf.uint32, -1)
         self.assertRaises(rf.RangeError, rf.uint32, -20)
-        self.assertRaises(rf.RangeError, rf.uint32, 2**32)
+        self.assertRaises(rf.RangeError, rf.uint32, 2 ** 32)
         self.assertRaises(rf.RangeError, rf.uint32, 45874349824936)
+        self.assertRaises(FileNotFoundError, rf.uint32, 45874349824936, ex=FileNotFoundError)
         rf.uint32(0)
         rf.uint32(1)
         rf.uint32(2)
@@ -79,14 +82,15 @@ class TestUnsignedInts(unittest.TestCase):
     def test_uint64(self):
         self.assertRaises(rf.RangeError, rf.uint64, -1)
         self.assertRaises(rf.RangeError, rf.uint64, -20)
-        self.assertRaises(rf.RangeError, rf.uint64, 2**64)
+        self.assertRaises(rf.RangeError, rf.uint64, 2 ** 64)
         self.assertRaises(rf.RangeError, rf.uint64,
                           345837634922573643925763492312573634)
+        self.assertRaises(FileNotFoundError, rf.uint64, 345837634922573643925763492312573634, ex=FileNotFoundError)
         rf.uint64(0)
         rf.uint64(1)
         rf.uint64(2)
-        rf.uint64(2**64 - 2)
-        rf.uint64(2**64 - 1)
+        rf.uint64(2 ** 64 - 2)
+        rf.uint64(2 ** 64 - 1)
         for i in range(0, 0xFFFFFFFFFFFFFFFF, 30000000000000):
             self.assertEqual(i, rf.uint64(i))
             self.assertIs(i, rf.uint64(i))
@@ -96,6 +100,7 @@ class TestUnsignedInts(unittest.TestCase):
         self.assertRaises(rf.RangeError, rf.uint_bits, 8, 2)
         self.assertRaises(rf.RangeError, rf.uint_bits, -1, 2)
         self.assertRaises(rf.RangeError, rf.uint_bits, -8, 2)
+        self.assertRaises(FileNotFoundError, rf.uint_bits, -8, 2, ex=FileNotFoundError)
         for i in range(0, 8):
             self.assertEqual(i, rf.uint_bits(i, 3))
             self.assertIs(i, rf.uint_bits(i, 3))
@@ -106,27 +111,30 @@ class TestUnsignedInts(unittest.TestCase):
 
 class TestSignedInts(unittest.TestCase):
     def test_int8(self):
-        self.assertRaises(rf.RangeError, rf.int8, -2**7 - 1)
+        self.assertRaises(rf.RangeError, rf.int8, -2 ** 7 - 1)
         self.assertRaises(rf.RangeError, rf.int8, -150)
-        self.assertRaises(rf.RangeError, rf.int8, 2**7)
+        self.assertRaises(rf.RangeError, rf.int8, 2 ** 7)
         self.assertRaises(rf.RangeError, rf.int8, 1560)
+        self.assertRaises(FileNotFoundError, rf.int8, 1560, ex=FileNotFoundError)
         for i in range(-128, 127):
             self.assertEqual(i, rf.int8(i))
             self.assertIs(i, rf.int8(i))
 
     def test_int16(self):
-        self.assertRaises(rf.RangeError, rf.int16, -2**15 - 1)
+        self.assertRaises(rf.RangeError, rf.int16, -2 ** 15 - 1)
         self.assertRaises(rf.RangeError, rf.int16, -675832495)
-        self.assertRaises(rf.RangeError, rf.int16, 2**15)
+        self.assertRaises(rf.RangeError, rf.int16, 2 ** 15)
         self.assertRaises(rf.RangeError, rf.int16, 5446345)
+        self.assertRaises(FileNotFoundError, rf.int16, 5446345, ex=FileNotFoundError)
         for i in range(-32768, 32767):
             self.assertEqual(i, rf.int16(i))
             self.assertIs(i, rf.int16(i))
 
     def test_int32(self):
-        self.assertRaises(rf.RangeError, rf.int32, -2**31 - 1)
-        self.assertRaises(rf.RangeError, rf.int32, 2**31)
+        self.assertRaises(rf.RangeError, rf.int32, -2 ** 31 - 1)
+        self.assertRaises(rf.RangeError, rf.int32, 2 ** 31)
         self.assertRaises(rf.RangeError, rf.int32, 45874349824936)
+        self.assertRaises(FileNotFoundError, rf.int32, 45874349824936, ex=FileNotFoundError)
         rf.int32(-0x8000000)
         rf.int32(-0x8000000 + 1)
         rf.int32(-2)
@@ -141,10 +149,11 @@ class TestSignedInts(unittest.TestCase):
             self.assertIs(i, rf.int32(i))
 
     def test_int64(self):
-        self.assertRaises(rf.RangeError, rf.int64, -2**64 - 1)
-        self.assertRaises(rf.RangeError, rf.int64, 2**64)
+        self.assertRaises(rf.RangeError, rf.int64, -2 ** 64 - 1)
+        self.assertRaises(rf.RangeError, rf.int64, 2 ** 64)
         self.assertRaises(rf.RangeError, rf.int64,
                           345837634922573643925763492312573634)
+        self.assertRaises(FileNotFoundError, rf.int64, 345837634922573643925763492312573634, ex=FileNotFoundError)
         rf.int64(-0x8000000000000000)
         rf.int64(-0x8000000000000000 + 1)
         rf.int64(-2)
@@ -165,12 +174,14 @@ class TestNegativePositiveInt(unittest.TestCase):
         self.assertRaises(rf.RangeError, rf.negative_int, 0)
         self.assertRaises(rf.RangeError, rf.negative_int, 1)
         self.assertRaises(rf.RangeError, rf.negative_int, 100)
+        self.assertRaises(FileNotFoundError, rf.negative_int, 100, ex=FileNotFoundError)
         self.assertEqual(-20, rf.negative_int(-20))
         self.assertIs(-20, rf.negative_int(-20))
 
     def test_nonpositive_int(self):
         self.assertRaises(rf.RangeError, rf.nonpositive_int, 1)
         self.assertRaises(rf.RangeError, rf.nonpositive_int, 100)
+        self.assertRaises(FileNotFoundError, rf.nonpositive_int, 100, ex=FileNotFoundError)
         self.assertEqual(-20, rf.nonpositive_int(-20))
         self.assertIs(-20, rf.nonpositive_int(-20))
         self.assertEqual(0, rf.nonpositive_int(0))
@@ -180,12 +191,14 @@ class TestNegativePositiveInt(unittest.TestCase):
         self.assertRaises(rf.RangeError, rf.positive_int, 0)
         self.assertRaises(rf.RangeError, rf.positive_int, -1)
         self.assertRaises(rf.RangeError, rf.positive_int, -100)
+        self.assertRaises(FileNotFoundError, rf.positive_int, -100, ex=FileNotFoundError)
         self.assertEqual(20, rf.positive_int(20))
         self.assertIs(20, rf.positive_int(20))
 
     def test_nonnegative_int(self):
         self.assertRaises(rf.RangeError, rf.nonnegative_int, -1)
         self.assertRaises(rf.RangeError, rf.nonnegative_int, -100)
+        self.assertRaises(FileNotFoundError, rf.nonnegative_int, -100, ex=FileNotFoundError)
         self.assertEqual(20, rf.nonnegative_int(20))
         self.assertIs(20, rf.nonnegative_int(20))
         self.assertEqual(0, rf.nonnegative_int(0))
@@ -340,6 +353,93 @@ class TestLimited(unittest.TestCase):
             rf.limited(2.0, 0, 10, dtype=int)
         self.assertEqual(expected_message, str(ex.exception))
 
+    def test_custom_exception_type(self):
+        expected_message = 'Value must be in range [100, 1000]. ' \
+                           '2 found instead.'
+        with self.assertRaises(FileNotFoundError) as ex:
+            rf.limited(2, 100, 1000, ex=FileNotFoundError)
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'HELLO must be in range [100, 1000]. ' \
+                           '2 found instead.'
+        with self.assertRaises(FileNotFoundError) as ex:
+            rf.limited(2, 100, 1000, name='HELLO', ex=FileNotFoundError)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_custom_exception_type_does_not_affect_dtype(self):
+        with self.assertRaises(FileNotFoundError) as ex:
+            rf.limited(2.0, 100, 1000, dtype=float, ex=FileNotFoundError)
+        with self.assertRaises(TypeError) as ex:
+            rf.limited(2.0, 100, 1000, dtype=int, ex=FileNotFoundError)
+
+
+class TestExact(unittest.TestCase):
+    def test_exact(self):
+        for i in range(-50, 50):
+            self.assertEqual(i, rf.exactly(i, i))
+
+    def test_not_exact(self):
+        expected_message = 'Value must be exactly 100. ' \
+                           '2 found instead.'
+        with self.assertRaises(rf.RangeError) as ex:
+            rf.exactly(2, 100)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_everything_differs_from_nan(self):
+        expected_message = 'Value must be exactly NaN. ' \
+                           '2 found instead.'
+        with self.assertRaises(rf.RangeError) as ex:
+            rf.exactly(2, math.nan)
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'Value must be exactly NaN. ' \
+                           'inf found instead.'
+        with self.assertRaises(rf.RangeError) as ex:
+            rf.exactly(math.inf, math.nan)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_nan_equal_to_nan(self):
+        self.assertTrue(math.isnan(rf.exactly(math.nan, math.nan)))
+
+    def test_custom_value_name(self):
+        expected_message = 'HELLO must be exactly NaN. ' \
+                           '2 found instead.'
+        with self.assertRaises(rf.RangeError) as ex:
+            rf.exactly(2, math.nan, name='HELLO')
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'HELLO must be exactly 100. ' \
+                           '2 found instead.'
+        with self.assertRaises(rf.RangeError) as ex:
+            rf.exactly(2, 100, name='HELLO')
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_enforce_type(self):
+        self.assertEqual(2, rf.exactly(2, 2, dtype=int))
+        expected_message = 'Value must be of type int. float found instead.'
+        with self.assertRaises(TypeError) as ex:
+            rf.exactly(2.0, 2, dtype=int)
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'HELLO must be of type int. float found instead.'
+        with self.assertRaises(TypeError) as ex:
+            rf.exactly(2.0, 3, name='HELLO', dtype=int)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_custom_exception_type(self):
+        expected_message = 'Value must be exactly 100. ' \
+                           '2 found instead.'
+        with self.assertRaises(FileNotFoundError) as ex:
+            rf.exactly(2, 100, ex=FileNotFoundError)
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'HELLO must be exactly 100. ' \
+                           '2 found instead.'
+        with self.assertRaises(FileNotFoundError) as ex:
+            rf.exactly(2, 100, name='HELLO', ex=FileNotFoundError)
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_custom_exception_type_does_not_affect_dtype(self):
+        with self.assertRaises(FileNotFoundError) as ex:
+            rf.exactly(2.0, 100, dtype=float, ex=FileNotFoundError)
+        with self.assertRaises(TypeError) as ex:
+            rf.exactly(2.0, 100, dtype=int, ex=FileNotFoundError)
+
 
 class TestLimitedLen(unittest.TestCase):
     def test_in_closed_range(self):
@@ -444,6 +544,18 @@ class TestLimitedLen(unittest.TestCase):
             rf.limited_len([2] * 10, float('nan'), 5)
         self.assertEqual(expected_message, str(ex.exception))
 
+    def test_custom_exception_type(self):
+        expected_message = 'Length of value must be in range [100, 1000]. ' \
+                           '1 found instead.'
+        with self.assertRaises(FileNotFoundError) as ex:
+            rf.limited_len([2], 100, 1000, ex=FileNotFoundError)
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'Length of HELLO must be in range [100, 1000]. ' \
+                           '1 found instead.'
+        with self.assertRaises(FileNotFoundError) as ex:
+            rf.limited_len([2], 100, 1000, name='HELLO', ex=FileNotFoundError)
+        self.assertEqual(expected_message, str(ex.exception))
+
 
 class TestExactLen(unittest.TestCase):
     def test_proper_length(self):
@@ -505,4 +617,16 @@ class TestExactLen(unittest.TestCase):
                            'float found instead.'
         with self.assertRaises(TypeError) as ex:
             rf.exact_len([2] * 2, float('nan'))
+        self.assertEqual(expected_message, str(ex.exception))
+
+    def test_custom_exception_type(self):
+        expected_message = 'Length of value must be exactly 100. ' \
+                           '1 found instead.'
+        with self.assertRaises(FileNotFoundError) as ex:
+            rf.exact_len([2], 100, ex=FileNotFoundError)
+        self.assertEqual(expected_message, str(ex.exception))
+        expected_message = 'Length of HELLO must be exactly 100. ' \
+                           '1 found instead.'
+        with self.assertRaises(FileNotFoundError) as ex:
+            rf.exact_len([2], 100, name='HELLO', ex=FileNotFoundError)
         self.assertEqual(expected_message, str(ex.exception))

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2019, Matjaž Guštin <dev@matjaz.it> <https://matjaz.it>.
+# Copyright © 2019-2020, Matjaž Guštin <dev@matjaz.it> <https://matjaz.it>.
 # Released under the BSD 3-Clause License
 
 """Package setup for the Rangeforce library."""
@@ -13,7 +13,7 @@ import setuptools
 
 setup(
     name='Rangeforce',
-    version='1.0.0',
+    version='1.1.0',
     description='Developer-friendly range checks with user-friendly error '
                 'messages',
     long_description=open('README.md').read(),
@@ -44,6 +44,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
     ],
     python_requires='>=3',
 )
